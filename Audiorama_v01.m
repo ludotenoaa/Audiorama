@@ -76,6 +76,7 @@ classdef Audiorama_v01 < matlab.apps.AppBase
         MM
         SS
         input_time
+        quick_update
         Flow
         Fhigh
         xfilt
@@ -136,6 +137,7 @@ classdef Audiorama_v01 < matlab.apps.AppBase
 
                 % plot spectrogram
                 app.input_time='manual';
+                app.quick_update=0;
                 [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
             end
         end
@@ -233,7 +235,9 @@ classdef Audiorama_v01 < matlab.apps.AppBase
 
         % Button pushed function: UpdateButton
         function UpdateButtonPushed(app, event)
-            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
+            if ~app.quick_update
+                [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
+            end
         end
 
         % Button pushed function: PlayButton
@@ -334,6 +338,8 @@ classdef Audiorama_v01 < matlab.apps.AppBase
         % Value changed function: FmaxEditField
         function FmaxEditFieldValueChanged(app, event)
             app.Fmax=app.FmaxEditField.Value;
+            ylim(app.UIAxes,[app.Fmin app.Fmax])
+            app.quick_update=1;
         end
 
         % Button pushed function: TimeSeriesButton
@@ -369,11 +375,15 @@ classdef Audiorama_v01 < matlab.apps.AppBase
         % Value changed function: dBmaxEditField
         function dBmaxEditFieldValueChanged(app, event)
             app.dBmax=app.dBmaxEditField.Value;
+            caxis(app.UIAxes,[app.dBmin app.dBmax]);
+            app.quick_update=1;
         end
 
         % Value changed function: dBminEditField
         function dBminEditFieldValueChanged(app, event)
             app.dBmin=app.dBminEditField.Value;
+            caxis(app.UIAxes,[app.dBmin app.dBmax]);
+            app.quick_update=1;
         end
 
         % Callback function
@@ -400,6 +410,8 @@ classdef Audiorama_v01 < matlab.apps.AppBase
         % Value changed function: FminEditField
         function FminEditFieldValueChanged(app, event)
             app.Fmin=app.FminEditField.Value;
+            ylim(app.UIAxes,[app.Fmin app.Fmax])
+            app.quick_update=1;
         end
     end
 
