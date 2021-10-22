@@ -424,10 +424,10 @@ classdef Audiorama < matlab.apps.AppBase
             tmp=strsplit(app.fname,'.');
             if strcmp(app.Switch.Value,'On')==1
                 app.xfilt=custom_filt(app);
-                wavname=sprintf('%s_%s_%is_filtered.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
+                wavname=sprintf('%s_Snippet_%s_%is_filtered.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
                 audiowrite(wavname,app.xfilt,app.Fs)
             else
-                wavname=sprintf('%s_%s_%is.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
+                wavname=sprintf('%s_Snippet_%s_%is.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
                 audiowrite(wavname,app.x,app.Fs)
             end
         end
