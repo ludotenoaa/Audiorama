@@ -1,8 +1,10 @@
-classdef Audiorama_v01 < matlab.apps.AppBase
+classdef Audiorama < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                matlab.ui.Figure
+        FileendLabel            matlab.ui.control.Label
+        FilestartLabel          matlab.ui.control.Label
         FhighEditField          matlab.ui.control.NumericEditField
         FhighEditFieldLabel     matlab.ui.control.Label
         FlowEditField           matlab.ui.control.NumericEditField
@@ -29,7 +31,6 @@ classdef Audiorama_v01 < matlab.apps.AppBase
         DateDatePicker          matlab.ui.control.DatePicker
         UpdateButton            matlab.ui.control.Button
         FminEditFieldLabel      matlab.ui.control.Label
-        DaysLabel               matlab.ui.control.Label
         FilterLabel             matlab.ui.control.Label
         dBmaxEditFieldLabel     matlab.ui.control.Label
         dBminEditFieldLabel     matlab.ui.control.Label
@@ -108,6 +109,8 @@ classdef Audiorama_v01 < matlab.apps.AppBase
                 app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
                 I=audioinfo([app.fullpath,app.fname]);
                 app.tend_file=app.tstart_file+I.Duration/86400;
+                app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
+                app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
 
                 % sets slider limits based based on file start/end time
                 app.Slider.Limits=[0 app.tend_file-app.tstart_file];
@@ -431,48 +434,48 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             xlabel(app.UIAxes, 'X')
             ylabel(app.UIAxes, 'Y')
             zlabel(app.UIAxes, 'Z')
-            app.UIAxes.Position = [2 53 1354 301];
+            app.UIAxes.Position = [1 1 1362 312];
 
             % Create Slider
             app.Slider = uislider(app.UIFigure);
             app.Slider.Limits = [0 1];
             app.Slider.ValueChangedFcn = createCallbackFcn(app, @SliderValueChanged, true);
-            app.Slider.Position = [21 394 1322 3];
+            app.Slider.Position = [21 348 1361 3];
 
             % Create DateDatePickerLabel
             app.DateDatePickerLabel = uilabel(app.UIFigure);
             app.DateDatePickerLabel.HorizontalAlignment = 'right';
-            app.DateDatePickerLabel.Position = [189 505 31 22];
+            app.DateDatePickerLabel.Position = [268 505 31 22];
             app.DateDatePickerLabel.Text = 'Date';
 
             % Create HourEditFieldLabel
             app.HourEditFieldLabel = uilabel(app.UIFigure);
             app.HourEditFieldLabel.HorizontalAlignment = 'right';
-            app.HourEditFieldLabel.Position = [214 475 35 22];
+            app.HourEditFieldLabel.Position = [293 475 35 22];
             app.HourEditFieldLabel.Text = 'Hour';
 
             % Create MinuteEditFieldLabel
             app.MinuteEditFieldLabel = uilabel(app.UIFigure);
             app.MinuteEditFieldLabel.HorizontalAlignment = 'right';
-            app.MinuteEditFieldLabel.Position = [207 443 42 22];
+            app.MinuteEditFieldLabel.Position = [286 443 42 22];
             app.MinuteEditFieldLabel.Text = 'Minute';
 
             % Create SecondEditFieldLabel
             app.SecondEditFieldLabel = uilabel(app.UIFigure);
             app.SecondEditFieldLabel.HorizontalAlignment = 'right';
-            app.SecondEditFieldLabel.Position = [203 412 46 22];
+            app.SecondEditFieldLabel.Position = [282 412 46 22];
             app.SecondEditFieldLabel.Text = 'Second';
 
             % Create OverlapEditFieldLabel
             app.OverlapEditFieldLabel = uilabel(app.UIFigure);
             app.OverlapEditFieldLabel.HorizontalAlignment = 'right';
-            app.OverlapEditFieldLabel.Position = [514 445 47 22];
+            app.OverlapEditFieldLabel.Position = [561 441 47 22];
             app.OverlapEditFieldLabel.Text = 'Overlap';
 
             % Create DurationEditFieldLabel
             app.DurationEditFieldLabel = uilabel(app.UIFigure);
             app.DurationEditFieldLabel.HorizontalAlignment = 'right';
-            app.DurationEditFieldLabel.Position = [372 433 51 22];
+            app.DurationEditFieldLabel.Position = [451 433 51 22];
             app.DurationEditFieldLabel.Text = 'Duration';
 
             % Create SpectrogramLabel
@@ -480,19 +483,18 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             app.SpectrogramLabel.HorizontalAlignment = 'center';
             app.SpectrogramLabel.FontSize = 15;
             app.SpectrogramLabel.FontWeight = 'bold';
-            app.SpectrogramLabel.Position = [575 540 161 24];
+            app.SpectrogramLabel.Position = [606 540 161 24];
             app.SpectrogramLabel.Text = 'Spectrogram';
 
             % Create FilenameLabel
             app.FilenameLabel = uilabel(app.UIFigure);
-            app.FilenameLabel.FontSize = 15;
-            app.FilenameLabel.Position = [147 20 601 22];
+            app.FilenameLabel.Position = [21 363 601 22];
             app.FilenameLabel.Text = 'Filename:';
 
             % Create WindowDropDownLabel
             app.WindowDropDownLabel = uilabel(app.UIFigure);
             app.WindowDropDownLabel.HorizontalAlignment = 'right';
-            app.WindowDropDownLabel.Position = [512 499 48 22];
+            app.WindowDropDownLabel.Position = [559 495 48 22];
             app.WindowDropDownLabel.Text = 'Window';
 
             % Create PlaybackLabel
@@ -500,13 +502,13 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             app.PlaybackLabel.HorizontalAlignment = 'center';
             app.PlaybackLabel.FontSize = 15;
             app.PlaybackLabel.FontWeight = 'bold';
-            app.PlaybackLabel.Position = [1073 540 110 24];
+            app.PlaybackLabel.Position = [1091 540 110 24];
             app.PlaybackLabel.Text = 'Playback';
 
             % Create FmaxEditFieldLabel
             app.FmaxEditFieldLabel = uilabel(app.UIFigure);
             app.FmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.FmaxEditFieldLabel.Position = [695 483 35 22];
+            app.FmaxEditFieldLabel.Position = [742 479 35 22];
             app.FmaxEditFieldLabel.Text = 'Fmax';
 
             % Create StarttimeLabel
@@ -514,7 +516,7 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             app.StarttimeLabel.HorizontalAlignment = 'center';
             app.StarttimeLabel.FontSize = 15;
             app.StarttimeLabel.FontWeight = 'bold';
-            app.StarttimeLabel.Position = [189 540 157 24];
+            app.StarttimeLabel.Position = [268 540 157 24];
             app.StarttimeLabel.Text = 'Start time';
 
             % Create ExportFiguresLabel
@@ -528,19 +530,19 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             % Create NfftDropDownLabel
             app.NfftDropDownLabel = uilabel(app.UIFigure);
             app.NfftDropDownLabel.HorizontalAlignment = 'right';
-            app.NfftDropDownLabel.Position = [536 472 25 22];
+            app.NfftDropDownLabel.Position = [583 468 25 22];
             app.NfftDropDownLabel.Text = 'Nfft';
 
             % Create dBminEditFieldLabel
             app.dBminEditFieldLabel = uilabel(app.UIFigure);
             app.dBminEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBminEditFieldLabel.Position = [690 447 39 22];
+            app.dBminEditFieldLabel.Position = [737 443 39 22];
             app.dBminEditFieldLabel.Text = 'dBmin';
 
             % Create dBmaxEditFieldLabel
             app.dBmaxEditFieldLabel = uilabel(app.UIFigure);
             app.dBmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBmaxEditFieldLabel.Position = [690 425 39 22];
+            app.dBmaxEditFieldLabel.Position = [737 421 39 22];
             app.dBmaxEditFieldLabel.Text = 'dBmax';
 
             % Create FilterLabel
@@ -548,96 +550,91 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             app.FilterLabel.HorizontalAlignment = 'center';
             app.FilterLabel.FontSize = 15;
             app.FilterLabel.FontWeight = 'bold';
-            app.FilterLabel.Position = [874 540 110 24];
+            app.FilterLabel.Position = [904 540 110 24];
             app.FilterLabel.Text = 'Filter';
-
-            % Create DaysLabel
-            app.DaysLabel = uilabel(app.UIFigure);
-            app.DaysLabel.Position = [22 413 77 22];
-            app.DaysLabel.Text = 'Days:';
 
             % Create FminEditFieldLabel
             app.FminEditFieldLabel = uilabel(app.UIFigure);
             app.FminEditFieldLabel.HorizontalAlignment = 'right';
-            app.FminEditFieldLabel.Position = [698 505 32 22];
+            app.FminEditFieldLabel.Position = [745 499 32 22];
             app.FminEditFieldLabel.Text = 'Fmin';
 
             % Create UpdateButton
             app.UpdateButton = uibutton(app.UIFigure, 'push');
             app.UpdateButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateButtonPushed, true);
-            app.UpdateButton.Position = [21 484 128 57];
+            app.UpdateButton.Position = [21 487 212 66];
             app.UpdateButton.Text = 'Update';
 
             % Create DateDatePicker
             app.DateDatePicker = uidatepicker(app.UIFigure);
             app.DateDatePicker.ValueChangedFcn = createCallbackFcn(app, @DateDatePickerValueChanged, true);
-            app.DateDatePicker.Position = [232 505 114 22];
+            app.DateDatePicker.Position = [311 505 114 22];
 
             % Create HourEditField
             app.HourEditField = uieditfield(app.UIFigure, 'numeric');
             app.HourEditField.Limits = [0 24];
             app.HourEditField.ValueChangedFcn = createCallbackFcn(app, @HourEditFieldValueChanged, true);
-            app.HourEditField.Position = [266 475 56 22];
+            app.HourEditField.Position = [345 475 56 22];
 
             % Create MinuteEditField
             app.MinuteEditField = uieditfield(app.UIFigure, 'numeric');
             app.MinuteEditField.Limits = [0 60];
             app.MinuteEditField.ValueChangedFcn = createCallbackFcn(app, @MinuteEditFieldValueChanged, true);
-            app.MinuteEditField.Position = [266 443 56 22];
+            app.MinuteEditField.Position = [345 443 56 22];
 
             % Create SecondEditField
             app.SecondEditField = uieditfield(app.UIFigure, 'numeric');
             app.SecondEditField.Limits = [0 60];
             app.SecondEditField.ValueChangedFcn = createCallbackFcn(app, @SecondEditFieldValueChanged, true);
-            app.SecondEditField.Position = [266 413 56 22];
+            app.SecondEditField.Position = [345 413 56 22];
 
             % Create DurationEditField
             app.DurationEditField = uieditfield(app.UIFigure, 'numeric');
             app.DurationEditField.ValueChangedFcn = createCallbackFcn(app, @DurationEditFieldValueChanged, true);
-            app.DurationEditField.Position = [345 412 78 22];
+            app.DurationEditField.Position = [424 412 78 22];
             app.DurationEditField.Value = 30;
 
             % Create WindowDropDown
             app.WindowDropDown = uidropdown(app.UIFigure);
             app.WindowDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
             app.WindowDropDown.ValueChangedFcn = createCallbackFcn(app, @WindowDropDownValueChanged2, true);
-            app.WindowDropDown.Position = [575 499 100 22];
+            app.WindowDropDown.Position = [622 495 100 22];
             app.WindowDropDown.Value = '512';
 
             % Create NfftDropDown
             app.NfftDropDown = uidropdown(app.UIFigure);
             app.NfftDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
             app.NfftDropDown.ValueChangedFcn = createCallbackFcn(app, @NfftDropDownValueChanged, true);
-            app.NfftDropDown.Position = [576 472 100 22];
+            app.NfftDropDown.Position = [623 468 100 22];
             app.NfftDropDown.Value = '1024';
 
             % Create OverlapEditField
             app.OverlapEditField = uieditfield(app.UIFigure, 'numeric');
             app.OverlapEditField.ValueChangedFcn = createCallbackFcn(app, @OverlapEditFieldValueChanged, true);
-            app.OverlapEditField.Position = [576 445 100 22];
+            app.OverlapEditField.Position = [623 441 100 22];
             app.OverlapEditField.Value = 0.75;
 
             % Create FminEditField
             app.FminEditField = uieditfield(app.UIFigure, 'numeric');
             app.FminEditField.ValueChangedFcn = createCallbackFcn(app, @FminEditFieldValueChanged, true);
-            app.FminEditField.Position = [736 505 40 22];
+            app.FminEditField.Position = [783 499 40 22];
 
             % Create FmaxEditField
             app.FmaxEditField = uieditfield(app.UIFigure, 'numeric');
             app.FmaxEditField.ValueChangedFcn = createCallbackFcn(app, @FmaxEditFieldValueChanged, true);
-            app.FmaxEditField.Position = [736 483 40 22];
+            app.FmaxEditField.Position = [783 479 40 22];
             app.FmaxEditField.Value = 250;
 
             % Create dBminEditField
             app.dBminEditField = uieditfield(app.UIFigure, 'numeric');
             app.dBminEditField.ValueChangedFcn = createCallbackFcn(app, @dBminEditFieldValueChanged, true);
-            app.dBminEditField.Position = [736 447 40 23];
+            app.dBminEditField.Position = [783 443 40 23];
             app.dBminEditField.Value = -110;
 
             % Create dBmaxEditField
             app.dBmaxEditField = uieditfield(app.UIFigure, 'numeric');
             app.dBmaxEditField.ValueChangedFcn = createCallbackFcn(app, @dBmaxEditFieldValueChanged, true);
-            app.dBmaxEditField.Position = [736 425 40 23];
+            app.dBmaxEditField.Position = [783 421 40 23];
             app.dBmaxEditField.Value = -70;
 
             % Create SpectrogramButton
@@ -655,58 +652,68 @@ classdef Audiorama_v01 < matlab.apps.AppBase
             % Create PlayButton
             app.PlayButton = uibutton(app.UIFigure, 'push');
             app.PlayButton.ButtonPushedFcn = createCallbackFcn(app, @PlayButtonPushed, true);
-            app.PlayButton.Position = [1073 483 110 43];
+            app.PlayButton.Position = [1091 483 110 43];
             app.PlayButton.Text = 'Play';
 
             % Create SelectfileButton
             app.SelectfileButton = uibutton(app.UIFigure, 'push');
             app.SelectfileButton.ButtonPushedFcn = createCallbackFcn(app, @SelectfileButtonPushed, true);
-            app.SelectfileButton.Position = [20 16 110 30];
+            app.SelectfileButton.Position = [21 446 212 30];
             app.SelectfileButton.Text = 'Select file';
 
             % Create StopButton
             app.StopButton = uibutton(app.UIFigure, 'push');
             app.StopButton.ButtonPushedFcn = createCallbackFcn(app, @StopButtonPushed, true);
-            app.StopButton.Position = [1073 433 110 43];
+            app.StopButton.Position = [1091 433 110 43];
             app.StopButton.Text = 'Stop';
 
             % Create Button
             app.Button = uibutton(app.UIFigure, 'push');
             app.Button.ButtonPushedFcn = createCallbackFcn(app, @ButtonPushed, true);
-            app.Button.Position = [1195 8 73 54];
+            app.Button.Position = [1272 359 51 54];
             app.Button.Text = '<<';
 
             % Create Button_2
             app.Button_2 = uibutton(app.UIFigure, 'push');
             app.Button_2.ButtonPushedFcn = createCallbackFcn(app, @Button_2Pushed, true);
-            app.Button_2.Position = [1282 8 73 54];
+            app.Button_2.Position = [1331 359 51 54];
             app.Button_2.Text = '>>';
 
             % Create Switch
             app.Switch = uiswitch(app.UIFigure, 'slider');
-            app.Switch.Position = [906 506 45 20];
+            app.Switch.Position = [948 506 45 20];
 
             % Create FlowEditFieldLabel
             app.FlowEditFieldLabel = uilabel(app.UIFigure);
             app.FlowEditFieldLabel.HorizontalAlignment = 'right';
-            app.FlowEditFieldLabel.Position = [864 466 31 22];
+            app.FlowEditFieldLabel.Position = [906 466 31 22];
             app.FlowEditFieldLabel.Text = 'Flow';
 
             % Create FlowEditField
             app.FlowEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FlowEditField.Position = [904 466 49 22];
+            app.FlowEditField.Position = [946 466 49 22];
             app.FlowEditField.Value = 50;
 
             % Create FhighEditFieldLabel
             app.FhighEditFieldLabel = uilabel(app.UIFigure);
             app.FhighEditFieldLabel.HorizontalAlignment = 'right';
-            app.FhighEditFieldLabel.Position = [860 433 35 22];
+            app.FhighEditFieldLabel.Position = [902 433 35 22];
             app.FhighEditFieldLabel.Text = 'Fhigh';
 
             % Create FhighEditField
             app.FhighEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FhighEditField.Position = [904 433 49 22];
+            app.FhighEditField.Position = [946 433 49 22];
             app.FhighEditField.Value = 200;
+
+            % Create FilestartLabel
+            app.FilestartLabel = uilabel(app.UIFigure);
+            app.FilestartLabel.Position = [21 412 202 22];
+            app.FilestartLabel.Text = 'File start:';
+
+            % Create FileendLabel
+            app.FileendLabel = uilabel(app.UIFigure);
+            app.FileendLabel.Position = [21 391 202 22];
+            app.FileendLabel.Text = 'File end:';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
@@ -717,7 +724,7 @@ classdef Audiorama_v01 < matlab.apps.AppBase
     methods (Access = public)
 
         % Construct app
-        function app = Audiorama_v01
+        function app = Audiorama
 
             % Create UIFigure and components
             createComponents(app)
