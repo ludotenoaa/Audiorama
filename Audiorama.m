@@ -301,14 +301,14 @@ classdef Audiorama < matlab.apps.AppBase
         function Button_2Pushed(app, event)
             app.tstart=app.tstart+(app.tlen/86400)/2;
             app.input_time='slider';
-            [app.x,app.Fs]=update_func(app);
+            [app.x,app.t,app.Fs]=update_func(app);
         end
 
         % Button pushed function: Button
         function ButtonPushed(app, event)
             app.tstart=app.tstart-(app.tlen/86400)/2;
             app.input_time='slider';
-            [app.x,app.Fs]=update_func(app);
+            [app.x,app.t,app.Fs]=update_func(app);
         end
 
         % Value changed function: DurationEditField
