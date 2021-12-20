@@ -2,56 +2,63 @@ classdef Audiorama < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                matlab.ui.Figure
-        ExportwavButton         matlab.ui.control.Button
-        ExportDataLabel         matlab.ui.control.Label
-        FileendLabel            matlab.ui.control.Label
-        FilestartLabel          matlab.ui.control.Label
-        FhighEditField          matlab.ui.control.NumericEditField
-        FhighEditFieldLabel     matlab.ui.control.Label
-        FlowEditField           matlab.ui.control.NumericEditField
-        FlowEditFieldLabel      matlab.ui.control.Label
-        Switch                  matlab.ui.control.Switch
-        Button_2                matlab.ui.control.Button
-        Button                  matlab.ui.control.Button
-        StopButton              matlab.ui.control.Button
-        SelectfileButton        matlab.ui.control.Button
-        PlayButton              matlab.ui.control.Button
-        TimeSeriesButton        matlab.ui.control.Button
-        SpectrogramButton       matlab.ui.control.Button
-        dBmaxEditField          matlab.ui.control.NumericEditField
-        dBminEditField          matlab.ui.control.NumericEditField
-        FmaxEditField           matlab.ui.control.NumericEditField
-        FminEditField           matlab.ui.control.NumericEditField
-        OverlapEditField        matlab.ui.control.NumericEditField
-        NfftDropDown            matlab.ui.control.DropDown
-        WindowDropDown          matlab.ui.control.DropDown
-        DurationEditField       matlab.ui.control.NumericEditField
-        SecondEditField         matlab.ui.control.NumericEditField
-        MinuteEditField         matlab.ui.control.NumericEditField
-        HourEditField           matlab.ui.control.NumericEditField
-        DateDatePicker          matlab.ui.control.DatePicker
-        UpdateButton            matlab.ui.control.Button
-        FminEditFieldLabel      matlab.ui.control.Label
-        FilterLabel             matlab.ui.control.Label
-        dBmaxEditFieldLabel     matlab.ui.control.Label
-        dBminEditFieldLabel     matlab.ui.control.Label
-        NfftDropDownLabel       matlab.ui.control.Label
-        ExportFiguresLabel      matlab.ui.control.Label
-        StarttimeLabel          matlab.ui.control.Label
-        FmaxEditFieldLabel      matlab.ui.control.Label
-        PlaybackLabel           matlab.ui.control.Label
-        WindowDropDownLabel     matlab.ui.control.Label
-        FilenameLabel           matlab.ui.control.Label
-        SpectrogramLabel        matlab.ui.control.Label
-        DurationEditFieldLabel  matlab.ui.control.Label
-        OverlapEditFieldLabel   matlab.ui.control.Label
-        SecondEditFieldLabel    matlab.ui.control.Label
-        MinuteEditFieldLabel    matlab.ui.control.Label
-        HourEditFieldLabel      matlab.ui.control.Label
-        Slider                  matlab.ui.control.Slider
-        DateDatePickerLabel     matlab.ui.control.Label
-        UIAxes                  matlab.ui.control.UIAxes
+        UIFigure                  matlab.ui.Figure
+        SamplerateLabel           matlab.ui.control.Label
+        EffectiveLabel            matlab.ui.control.Label
+        DownsampleEditField       matlab.ui.control.NumericEditField
+        DownsampleEditFieldLabel  matlab.ui.control.Label
+        OriginalLabel             matlab.ui.control.Label
+        DatasetDropDown           matlab.ui.control.DropDown
+        DatasetDropDownLabel      matlab.ui.control.Label
+        ExportwavButton           matlab.ui.control.Button
+        ExportDataLabel           matlab.ui.control.Label
+        FileendLabel              matlab.ui.control.Label
+        FilestartLabel            matlab.ui.control.Label
+        FhighEditField            matlab.ui.control.NumericEditField
+        FhighEditFieldLabel       matlab.ui.control.Label
+        FlowEditField             matlab.ui.control.NumericEditField
+        FlowEditFieldLabel        matlab.ui.control.Label
+        Switch                    matlab.ui.control.Switch
+        Button_2                  matlab.ui.control.Button
+        Button                    matlab.ui.control.Button
+        StopButton                matlab.ui.control.Button
+        SelectfileButton          matlab.ui.control.Button
+        PlayButton                matlab.ui.control.Button
+        TimeSeriesButton          matlab.ui.control.Button
+        SpectrogramButton         matlab.ui.control.Button
+        dBmaxEditField            matlab.ui.control.NumericEditField
+        dBminEditField            matlab.ui.control.NumericEditField
+        FmaxEditField             matlab.ui.control.NumericEditField
+        FminEditField             matlab.ui.control.NumericEditField
+        OverlapEditField          matlab.ui.control.NumericEditField
+        NfftDropDown              matlab.ui.control.DropDown
+        WindowDropDown            matlab.ui.control.DropDown
+        DurationEditField         matlab.ui.control.NumericEditField
+        SecondEditField           matlab.ui.control.NumericEditField
+        MinuteEditField           matlab.ui.control.NumericEditField
+        HourEditField             matlab.ui.control.NumericEditField
+        DateDatePicker            matlab.ui.control.DatePicker
+        UpdateButton              matlab.ui.control.Button
+        FminEditFieldLabel        matlab.ui.control.Label
+        FilterLabel               matlab.ui.control.Label
+        dBmaxEditFieldLabel       matlab.ui.control.Label
+        dBminEditFieldLabel       matlab.ui.control.Label
+        NfftDropDownLabel         matlab.ui.control.Label
+        ExportFiguresLabel        matlab.ui.control.Label
+        StarttimeLabel            matlab.ui.control.Label
+        FmaxEditFieldLabel        matlab.ui.control.Label
+        PlaybackLabel             matlab.ui.control.Label
+        WindowDropDownLabel       matlab.ui.control.Label
+        FilenameLabel             matlab.ui.control.Label
+        SpectrogramLabel          matlab.ui.control.Label
+        DurationEditFieldLabel    matlab.ui.control.Label
+        OverlapEditFieldLabel     matlab.ui.control.Label
+        SecondEditFieldLabel      matlab.ui.control.Label
+        MinuteEditFieldLabel      matlab.ui.control.Label
+        HourEditFieldLabel        matlab.ui.control.Label
+        Slider                    matlab.ui.control.Slider
+        DateDatePickerLabel       matlab.ui.control.Label
+        UIAxes                    matlab.ui.control.UIAxes
     end
 
 
@@ -107,12 +114,19 @@ classdef Audiorama < matlab.apps.AppBase
                 app.FilenameLabel.Text=['Filename: ',app.fname];
 
                 % extract file start/end time
-                tmp=strsplit(app.fname,'_');
-                app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+                if strcmp(app.DatasetDropDown.Value,'HARP')
+                    tmp=strsplit(app.fname,'_');
+                    app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+                elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+                    tmp=strsplit(app.fname,'.');
+                    app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
+                end
                 I=audioinfo([app.fullpath,app.fname]);
                 app.tend_file=app.tstart_file+I.Duration/86400;
                 app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
                 app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
+
+                app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
 
                 % sets slider limits based based on file start/end time
                 app.Slider.Limits=[0 app.tend_file-app.tstart_file];
@@ -160,9 +174,6 @@ classdef Audiorama < matlab.apps.AppBase
                     app.MinuteEditField.Value,...
                     app.SecondEditField.Value);
 
-                % update slider position
-                app.Slider.Value=app.tstart-app.tstart_file;
-
                 % start time based on slider position
             else
 
@@ -177,9 +188,27 @@ classdef Audiorama < matlab.apps.AppBase
                 app.SecondEditField.Value=str2double(datestr(app.tstart,'SS'));
             end
 
+            % update slider position
+            app.Slider.Value=app.tstart-app.tstart_file;
+
             % Read data for given start time and duration
+            if strcmp(app.DatasetDropDown.Value,'HARP')
             [x,Fs,t,app.tstart_file,app.tend_file]=...
                 read_GOM_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+            elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+            [x,Fs,t,app.tstart_file,app.tend_file]=...
+                read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+            end
+
+            x=x-mean(x);
+
+                x=decimate(x,app.DownsampleEditField.Value);
+                Fs=Fs/app.DownsampleEditField.Value;
+
+                app.EffectiveLabel.Text=sprintf('Effective: %i Hz',Fs);
+
+                t=[0:1:length(x)-1]'/Fs;
+
 
             % Compute spectrogram
             [~,F,T,P]=spectrogram(x,app.N,round(app.N*app.ovrlap),app.Nfft,Fs);
@@ -243,6 +272,7 @@ classdef Audiorama < matlab.apps.AppBase
             if ~app.quick_update
                 [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
             end
+            app.quick_update=0;
         end
 
         % Button pushed function: PlayButton
@@ -301,14 +331,14 @@ classdef Audiorama < matlab.apps.AppBase
         function Button_2Pushed(app, event)
             app.tstart=app.tstart+(app.tlen/86400)/2;
             app.input_time='slider';
-            [app.x,app.t,app.Fs]=update_func(app);
+            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
         end
 
         % Button pushed function: Button
         function ButtonPushed(app, event)
             app.tstart=app.tstart-(app.tlen/86400)/2;
             app.input_time='slider';
-            [app.x,app.t,app.Fs]=update_func(app);
+            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
         end
 
         % Value changed function: DurationEditField
@@ -336,8 +366,8 @@ classdef Audiorama < matlab.apps.AppBase
             set(gca,'YDir','Normal')
             set(gcf,'Position',[75 350 1200 300])
 
-            title(sprintf('Filename: %s\nStart time: %s\nSpectrogram: Window = %i; Overlap = %.2f%%; Nfft = %i',...
-                app.fname,datestr(app.tstart),app.N,app.ovrlap,app.Nfft),'Interpreter','none')
+            title(sprintf('Filename: %s\nStart time: %s\nSpectrogram: Window = %i; Overlap = %.2f%%; Nfft = %i; Fs = %i Hz',...
+                app.fname,datestr(app.tstart),app.N,app.ovrlap,app.Nfft,app.Fs),'Interpreter','none')
         end
 
         % Value changed function: FmaxEditField
@@ -357,13 +387,13 @@ classdef Audiorama < matlab.apps.AppBase
                 app.xfilt=custom_filt(app);
                 plot(app.t,app.xfilt)
 
-                title(sprintf('Filename: %s\nStart time: %s\nFilter: [%.2f %.2f Hz]',...
-                    app.fname,datestr(app.tstart),app.Flow,app.Fhigh),'Interpreter','none')
+                title(sprintf('Filename: %s\nStart time: %s\nFilter: [%.2f %.2f Hz]; Fs = %i Hz',...
+                    app.fname,datestr(app.tstart),app.Flow,app.Fhigh,app.Fs),'Interpreter','none')
 
             else
                 plot(app.t,app.x)
-                title(sprintf('Filename: %s\nStart time: %s',...
-                    app.fname,datestr(app.tstart)),'Interpreter','none')
+                title(sprintf('Filename: %s\nStart time: %s\nFs = %i Hz',...
+                    app.fname,datestr(app.tstart),app.Fs),'Interpreter','none')
             end
             grid on
             xlabel('Time (s)'); ylabel('Amplitude (uncalibrated)')
@@ -484,7 +514,7 @@ classdef Audiorama < matlab.apps.AppBase
             % Create OverlapEditFieldLabel
             app.OverlapEditFieldLabel = uilabel(app.UIFigure);
             app.OverlapEditFieldLabel.HorizontalAlignment = 'right';
-            app.OverlapEditFieldLabel.Position = [522 441 47 22];
+            app.OverlapEditFieldLabel.Position = [522 447 47 22];
             app.OverlapEditFieldLabel.Text = 'Overlap';
 
             % Create DurationEditFieldLabel
@@ -503,13 +533,13 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Create FilenameLabel
             app.FilenameLabel = uilabel(app.UIFigure);
-            app.FilenameLabel.Position = [21 363 601 22];
+            app.FilenameLabel.Position = [10 363 382 22];
             app.FilenameLabel.Text = 'Filename:';
 
             % Create WindowDropDownLabel
             app.WindowDropDownLabel = uilabel(app.UIFigure);
             app.WindowDropDownLabel.HorizontalAlignment = 'right';
-            app.WindowDropDownLabel.Position = [520 495 48 22];
+            app.WindowDropDownLabel.Position = [520 501 48 22];
             app.WindowDropDownLabel.Text = 'Window';
 
             % Create PlaybackLabel
@@ -523,7 +553,7 @@ classdef Audiorama < matlab.apps.AppBase
             % Create FmaxEditFieldLabel
             app.FmaxEditFieldLabel = uilabel(app.UIFigure);
             app.FmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.FmaxEditFieldLabel.Position = [703 479 35 22];
+            app.FmaxEditFieldLabel.Position = [703 485 35 22];
             app.FmaxEditFieldLabel.Text = 'Fmax';
 
             % Create StarttimeLabel
@@ -545,19 +575,19 @@ classdef Audiorama < matlab.apps.AppBase
             % Create NfftDropDownLabel
             app.NfftDropDownLabel = uilabel(app.UIFigure);
             app.NfftDropDownLabel.HorizontalAlignment = 'right';
-            app.NfftDropDownLabel.Position = [544 468 25 22];
+            app.NfftDropDownLabel.Position = [544 474 25 22];
             app.NfftDropDownLabel.Text = 'Nfft';
 
             % Create dBminEditFieldLabel
             app.dBminEditFieldLabel = uilabel(app.UIFigure);
             app.dBminEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBminEditFieldLabel.Position = [698 443 39 22];
+            app.dBminEditFieldLabel.Position = [698 449 39 22];
             app.dBminEditFieldLabel.Text = 'dBmin';
 
             % Create dBmaxEditFieldLabel
             app.dBmaxEditFieldLabel = uilabel(app.UIFigure);
             app.dBmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBmaxEditFieldLabel.Position = [698 421 39 22];
+            app.dBmaxEditFieldLabel.Position = [698 427 39 22];
             app.dBmaxEditFieldLabel.Text = 'dBmax';
 
             % Create FilterLabel
@@ -571,13 +601,13 @@ classdef Audiorama < matlab.apps.AppBase
             % Create FminEditFieldLabel
             app.FminEditFieldLabel = uilabel(app.UIFigure);
             app.FminEditFieldLabel.HorizontalAlignment = 'right';
-            app.FminEditFieldLabel.Position = [706 499 32 22];
+            app.FminEditFieldLabel.Position = [706 505 32 22];
             app.FminEditFieldLabel.Text = 'Fmin';
 
             % Create UpdateButton
             app.UpdateButton = uibutton(app.UIFigure, 'push');
             app.UpdateButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateButtonPushed, true);
-            app.UpdateButton.Position = [21 487 212 66];
+            app.UpdateButton.Position = [10 506 212 58];
             app.UpdateButton.Text = 'Update';
 
             % Create DateDatePicker
@@ -613,37 +643,37 @@ classdef Audiorama < matlab.apps.AppBase
             app.WindowDropDown = uidropdown(app.UIFigure);
             app.WindowDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
             app.WindowDropDown.ValueChangedFcn = createCallbackFcn(app, @WindowDropDownValueChanged2, true);
-            app.WindowDropDown.Position = [583 495 100 22];
+            app.WindowDropDown.Position = [583 501 100 22];
             app.WindowDropDown.Value = '512';
 
             % Create NfftDropDown
             app.NfftDropDown = uidropdown(app.UIFigure);
             app.NfftDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
             app.NfftDropDown.ValueChangedFcn = createCallbackFcn(app, @NfftDropDownValueChanged, true);
-            app.NfftDropDown.Position = [584 468 100 22];
+            app.NfftDropDown.Position = [584 474 100 22];
             app.NfftDropDown.Value = '1024';
 
             % Create OverlapEditField
             app.OverlapEditField = uieditfield(app.UIFigure, 'numeric');
             app.OverlapEditField.ValueChangedFcn = createCallbackFcn(app, @OverlapEditFieldValueChanged, true);
-            app.OverlapEditField.Position = [584 441 100 22];
+            app.OverlapEditField.Position = [584 447 100 22];
             app.OverlapEditField.Value = 0.75;
 
             % Create FminEditField
             app.FminEditField = uieditfield(app.UIFigure, 'numeric');
             app.FminEditField.ValueChangedFcn = createCallbackFcn(app, @FminEditFieldValueChanged, true);
-            app.FminEditField.Position = [744 499 40 22];
+            app.FminEditField.Position = [744 505 40 22];
 
             % Create FmaxEditField
             app.FmaxEditField = uieditfield(app.UIFigure, 'numeric');
             app.FmaxEditField.ValueChangedFcn = createCallbackFcn(app, @FmaxEditFieldValueChanged, true);
-            app.FmaxEditField.Position = [744 479 40 22];
+            app.FmaxEditField.Position = [744 485 40 22];
             app.FmaxEditField.Value = 250;
 
             % Create dBminEditField
             app.dBminEditField = uieditfield(app.UIFigure, 'numeric');
             app.dBminEditField.ValueChangedFcn = createCallbackFcn(app, @dBminEditFieldValueChanged, true);
-            app.dBminEditField.Position = [744 443 40 23];
+            app.dBminEditField.Position = [744 449 40 23];
             app.dBminEditField.Value = -110;
 
             % Create dBmaxEditField
@@ -673,7 +703,7 @@ classdef Audiorama < matlab.apps.AppBase
             % Create SelectfileButton
             app.SelectfileButton = uibutton(app.UIFigure, 'push');
             app.SelectfileButton.ButtonPushedFcn = createCallbackFcn(app, @SelectfileButtonPushed, true);
-            app.SelectfileButton.Position = [21 446 212 30];
+            app.SelectfileButton.Position = [10 442 212 24];
             app.SelectfileButton.Text = 'Select file';
 
             % Create StopButton
@@ -722,12 +752,12 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Create FilestartLabel
             app.FilestartLabel = uilabel(app.UIFigure);
-            app.FilestartLabel.Position = [21 412 202 22];
+            app.FilestartLabel.Position = [10 412 202 22];
             app.FilestartLabel.Text = 'File start:';
 
             % Create FileendLabel
             app.FileendLabel = uilabel(app.UIFigure);
-            app.FileendLabel.Position = [21 391 202 22];
+            app.FileendLabel.Position = [10 391 202 22];
             app.FileendLabel.Text = 'File end:';
 
             % Create ExportDataLabel
@@ -743,6 +773,47 @@ classdef Audiorama < matlab.apps.AppBase
             app.ExportwavButton.ButtonPushedFcn = createCallbackFcn(app, @ExportwavButtonPushed, true);
             app.ExportwavButton.Position = [1267 458 110 43];
             app.ExportwavButton.Text = 'Export .wav';
+
+            % Create DatasetDropDownLabel
+            app.DatasetDropDownLabel = uilabel(app.UIFigure);
+            app.DatasetDropDownLabel.HorizontalAlignment = 'right';
+            app.DatasetDropDownLabel.Position = [10 475 47 22];
+            app.DatasetDropDownLabel.Text = 'Dataset';
+
+            % Create DatasetDropDown
+            app.DatasetDropDown = uidropdown(app.UIFigure);
+            app.DatasetDropDown.Items = {'SoundTrap', 'HARP', 'Other'};
+            app.DatasetDropDown.Position = [65 471 157 29];
+            app.DatasetDropDown.Value = 'SoundTrap';
+
+            % Create OriginalLabel
+            app.OriginalLabel = uilabel(app.UIFigure);
+            app.OriginalLabel.Position = [559 389 149 25];
+            app.OriginalLabel.Text = 'Original: ';
+
+            % Create DownsampleEditFieldLabel
+            app.DownsampleEditFieldLabel = uilabel(app.UIFigure);
+            app.DownsampleEditFieldLabel.HorizontalAlignment = 'right';
+            app.DownsampleEditFieldLabel.Position = [420 361 75 22];
+            app.DownsampleEditFieldLabel.Text = 'Downsample';
+
+            % Create DownsampleEditField
+            app.DownsampleEditField = uieditfield(app.UIFigure, 'numeric');
+            app.DownsampleEditField.Position = [502 361 38 22];
+            app.DownsampleEditField.Value = 1;
+
+            % Create EffectiveLabel
+            app.EffectiveLabel = uilabel(app.UIFigure);
+            app.EffectiveLabel.Position = [559 360 149 25];
+            app.EffectiveLabel.Text = 'Effective: ';
+
+            % Create SamplerateLabel
+            app.SamplerateLabel = uilabel(app.UIFigure);
+            app.SamplerateLabel.HorizontalAlignment = 'center';
+            app.SamplerateLabel.FontSize = 15;
+            app.SamplerateLabel.FontWeight = 'bold';
+            app.SamplerateLabel.Position = [520 411 102 24];
+            app.SamplerateLabel.Text = 'Sample rate';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
