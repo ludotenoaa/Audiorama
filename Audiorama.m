@@ -1,3 +1,6 @@
+%%%% Audiorama
+%%%% Ludovic Tenorio 2021
+
 classdef Audiorama < matlab.apps.AppBase
 
     % Properties that correspond to app components
