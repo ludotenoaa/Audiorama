@@ -194,7 +194,7 @@ classdef Audiorama < matlab.apps.AppBase
             % Read data for given start time and duration
             if strcmp(app.DatasetDropDown.Value,'HARP')
             [x,Fs,t,app.tstart_file,app.tend_file]=...
-                read_GOM_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+                read_HARP_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
             [x,Fs,t,app.tstart_file,app.tend_file]=...
                 read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
