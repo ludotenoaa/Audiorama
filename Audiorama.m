@@ -1,11 +1,10 @@
-%%%% Audiorama
-%%%% Ludovic Tenorio 2021
-
 classdef Audiorama < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                  matlab.ui.Figure
+        Button_4                  matlab.ui.control.Button
+        Button_3                  matlab.ui.control.Button
         SamplerateLabel           matlab.ui.control.Label
         EffectiveLabel            matlab.ui.control.Label
         DownsampleEditField       matlab.ui.control.NumericEditField
@@ -258,6 +257,58 @@ classdef Audiorama < matlab.apps.AppBase
             % apply filter
             xfilt=filtfilt(B,1,app.x);
         end
+
+        %% switch to next file
+
+        function next_file(app,m)
+            
+            D=dir(app.fullpath);
+        
+            for k=1:length(D)
+                if strcmp(D(k).name,app.fname)==1
+                     app.fname=D(k+m).name;
+                     break
+                end
+            end
+           
+
+            % displays file name
+                app.FilenameLabel.Text=['Filename: ',app.fname];
+
+                % extract file start/end time
+                if strcmp(app.DatasetDropDown.Value,'HARP')
+                    tmp=strsplit(app.fname,'_');
+                    app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+                elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+                    tmp=strsplit(app.fname,'.');
+                    app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
+                end
+                I=audioinfo([app.fullpath,app.fname]);
+                app.tend_file=app.tstart_file+I.Duration/86400;
+                app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
+                app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
+
+                app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
+
+                % sets slider limits based based on file start/end time
+                app.Slider.Limits=[0 app.tend_file-app.tstart_file];
+
+                % set file start time as default time
+                tmp=datestr(app.tstart_file,'yyyy-mm-dd-HH-MM-SS');
+                tmp=strsplit(tmp,'-');
+                app.HourEditField.Value=str2double(tmp{4});
+                app.MinuteEditField.Value=str2double(tmp{5});
+                app.SecondEditField.Value=str2double(tmp{6});
+                app.DateDatePicker.Value=datetime(str2double(tmp{1}),...
+                    str2double(tmp{2}),str2double(tmp{3}));
+
+                % plot spectrogram
+                app.input_time='manual';
+                app.quick_update=0;
+                [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
+
+        end
+
     end
 
 
@@ -463,6 +514,16 @@ classdef Audiorama < matlab.apps.AppBase
                 wavname=sprintf('%s_Snippet_%s_%is.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
                 audiowrite(wavname,app.x,app.Fs)
             end
+        end
+
+        % Button pushed function: Button_3
+        function Button_3Pushed(app, event)
+            next_file(app,1)
+        end
+
+        % Button pushed function: Button_4
+        function Button_4Pushed(app, event)
+            next_file(app,-1)
         end
     end
 
@@ -718,14 +779,14 @@ classdef Audiorama < matlab.apps.AppBase
             % Create Button
             app.Button = uibutton(app.UIFigure, 'push');
             app.Button.ButtonPushedFcn = createCallbackFcn(app, @ButtonPushed, true);
-            app.Button.Position = [1267 360 51 54];
-            app.Button.Text = '<<';
+            app.Button.Position = [1212 363 51 54];
+            app.Button.Text = '<';
 
             % Create Button_2
             app.Button_2 = uibutton(app.UIFigure, 'push');
             app.Button_2.ButtonPushedFcn = createCallbackFcn(app, @Button_2Pushed, true);
-            app.Button_2.Position = [1326 360 51 54];
-            app.Button_2.Text = '>>';
+            app.Button_2.Position = [1267 363 51 54];
+            app.Button_2.Text = '>';
 
             % Create Switch
             app.Switch = uiswitch(app.UIFigure, 'slider');
@@ -817,6 +878,18 @@ classdef Audiorama < matlab.apps.AppBase
             app.SamplerateLabel.FontWeight = 'bold';
             app.SamplerateLabel.Position = [520 411 102 24];
             app.SamplerateLabel.Text = 'Sample rate';
+
+            % Create Button_3
+            app.Button_3 = uibutton(app.UIFigure, 'push');
+            app.Button_3.ButtonPushedFcn = createCallbackFcn(app, @Button_3Pushed, true);
+            app.Button_3.Position = [1331 363 51 54];
+            app.Button_3.Text = '>>';
+
+            % Create Button_4
+            app.Button_4 = uibutton(app.UIFigure, 'push');
+            app.Button_4.ButtonPushedFcn = createCallbackFcn(app, @Button_4Pushed, true);
+            app.Button_4.Position = [1148 363 51 54];
+            app.Button_4.Text = '<<';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
