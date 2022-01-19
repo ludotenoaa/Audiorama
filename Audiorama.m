@@ -122,6 +122,14 @@ classdef Audiorama < matlab.apps.AppBase
                 elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
                     tmp=strsplit(app.fname,'.');
                     app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
+                elseif strcmp(app.DatasetDropDown.Value,'Other')
+                    app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
+                    app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
+
+                    if isempty(app.tstart_file)
+                        app.tstart_file=datenum(2010,1,1,0,0,0);
+                    end
+
                 end
                 I=audioinfo([app.fullpath,app.fname]);
                 app.tend_file=app.tstart_file+I.Duration/86400;
@@ -195,21 +203,27 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Read data for given start time and duration
             if strcmp(app.DatasetDropDown.Value,'HARP')
-            [x,Fs,t,app.tstart_file,app.tend_file]=...
-                read_HARP_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+                [x,Fs,t,app.tstart_file,app.tend_file]=...
+                    read_HARP_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
-            [x,Fs,t,app.tstart_file,app.tend_file]=...
-                read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+                [x,Fs,t,app.tstart_file,app.tend_file]=...
+                    read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+            elseif strcmp(app.DatasetDropDown.Value,'Other')
+                I=audioinfo([app.fullpath,app.fname]);
+                Fs=I.SampleRate;
+                N=round(Fs*(([app.tstart app.tstart+app.tlen/86400]-app.tstart_file)*86400));
+                N(1)=N(1)+1;
+                [x,Fs]=audioread([app.fullpath,app.fname],N);
             end
 
             x=x-mean(x);
 
-                x=decimate(x,app.DownsampleEditField.Value);
-                Fs=Fs/app.DownsampleEditField.Value;
+            x=decimate(x,app.DownsampleEditField.Value);
+            Fs=Fs/app.DownsampleEditField.Value;
 
-                app.EffectiveLabel.Text=sprintf('Effective: %i Hz',Fs);
+            app.EffectiveLabel.Text=sprintf('Effective: %i Hz',Fs);
 
-                t=[0:1:length(x)-1]'/Fs;
+            t=[0:1:length(x)-1]'/Fs;
 
 
             % Compute spectrogram
@@ -261,51 +275,59 @@ classdef Audiorama < matlab.apps.AppBase
         %% switch to next file
 
         function next_file(app,m)
-            
+
             D=dir(app.fullpath);
-        
+
             for k=1:length(D)
                 if strcmp(D(k).name,app.fname)==1
-                     app.fname=D(k+m).name;
-                     break
+                    app.fname=D(k+m).name;
+                    break
                 end
             end
-           
+
+
 
             % displays file name
-                app.FilenameLabel.Text=['Filename: ',app.fname];
+            app.FilenameLabel.Text=['Filename: ',app.fname];
 
-                % extract file start/end time
-                if strcmp(app.DatasetDropDown.Value,'HARP')
-                    tmp=strsplit(app.fname,'_');
-                    app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
-                elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
-                    tmp=strsplit(app.fname,'.');
-                    app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
+            % extract file start/end time
+            if strcmp(app.DatasetDropDown.Value,'HARP')
+                tmp=strsplit(app.fname,'_');
+                app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+            elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+                tmp=strsplit(app.fname,'.');
+                app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
+            elseif strcmp(app.DatasetDropDown.Value,'Other')
+                app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
+                app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
+                if isempty(app.tstart_file)
+                    app.tstart_file=datenum(2010,1,1,0,0,0);
                 end
-                I=audioinfo([app.fullpath,app.fname]);
-                app.tend_file=app.tstart_file+I.Duration/86400;
-                app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
-                app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
 
-                app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
+            end
+            I=audioinfo([app.fullpath,app.fname]);
+            app.tend_file=app.tstart_file+I.Duration/86400;
+            app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
+            app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
 
-                % sets slider limits based based on file start/end time
-                app.Slider.Limits=[0 app.tend_file-app.tstart_file];
+            app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
 
-                % set file start time as default time
-                tmp=datestr(app.tstart_file,'yyyy-mm-dd-HH-MM-SS');
-                tmp=strsplit(tmp,'-');
-                app.HourEditField.Value=str2double(tmp{4});
-                app.MinuteEditField.Value=str2double(tmp{5});
-                app.SecondEditField.Value=str2double(tmp{6});
-                app.DateDatePicker.Value=datetime(str2double(tmp{1}),...
-                    str2double(tmp{2}),str2double(tmp{3}));
+            % sets slider limits based based on file start/end time
+            app.Slider.Limits=[0 app.tend_file-app.tstart_file];
 
-                % plot spectrogram
-                app.input_time='manual';
-                app.quick_update=0;
-                [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
+            % set file start time as default time
+            tmp=datestr(app.tstart_file,'yyyy-mm-dd-HH-MM-SS');
+            tmp=strsplit(tmp,'-');
+            app.HourEditField.Value=str2double(tmp{4});
+            app.MinuteEditField.Value=str2double(tmp{5});
+            app.SecondEditField.Value=str2double(tmp{6});
+            app.DateDatePicker.Value=datetime(str2double(tmp{1}),...
+                str2double(tmp{2}),str2double(tmp{3}));
+
+            % plot spectrogram
+            app.input_time='manual';
+            app.quick_update=0;
+            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
 
         end
 
