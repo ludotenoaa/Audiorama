@@ -10,8 +10,8 @@ classdef Audiorama < matlab.apps.AppBase
         DownsampleEditField       matlab.ui.control.NumericEditField
         DownsampleEditFieldLabel  matlab.ui.control.Label
         OriginalLabel             matlab.ui.control.Label
-        DatasetDropDown           matlab.ui.control.DropDown
-        DatasetDropDownLabel      matlab.ui.control.Label
+        FiletypeDropDown          matlab.ui.control.DropDown
+        FiletypeDropDownLabel     matlab.ui.control.Label
         ExportwavButton           matlab.ui.control.Button
         ExportDataLabel           matlab.ui.control.Label
         FileendLabel              matlab.ui.control.Label
@@ -116,13 +116,13 @@ classdef Audiorama < matlab.apps.AppBase
                 app.FilenameLabel.Text=['Filename: ',app.fname];
 
                 % extract file start/end time
-                if strcmp(app.DatasetDropDown.Value,'HARP')
+                if strcmp(app.FiletypeDropDown.Value,'HARP')
                     tmp=strsplit(app.fname,'_');
                     app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
-                elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+                elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                     tmp=strsplit(app.fname,'.');
                     app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
-                elseif strcmp(app.DatasetDropDown.Value,'Other')
+                elseif strcmp(app.FiletypeDropDown.Value,'Other')
                     app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
                     app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
 
@@ -202,13 +202,13 @@ classdef Audiorama < matlab.apps.AppBase
             app.Slider.Value=app.tstart-app.tstart_file;
 
             % Read data for given start time and duration
-            if strcmp(app.DatasetDropDown.Value,'HARP')
+            if strcmp(app.FiletypeDropDown.Value,'HARP')
                 [x,Fs,t,app.tstart_file,app.tend_file]=...
                     read_HARP_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
-            elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+            elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                 [x,Fs,t,app.tstart_file,app.tend_file]=...
                     read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
-            elseif strcmp(app.DatasetDropDown.Value,'Other')
+            elseif strcmp(app.FiletypeDropDown.Value,'Other')
                 I=audioinfo([app.fullpath,app.fname]);
                 Fs=I.SampleRate;
                 N=round(Fs*(([app.tstart app.tstart+app.tlen/86400]-app.tstart_file)*86400));
@@ -291,13 +291,13 @@ classdef Audiorama < matlab.apps.AppBase
             app.FilenameLabel.Text=['Filename: ',app.fname];
 
             % extract file start/end time
-            if strcmp(app.DatasetDropDown.Value,'HARP')
+            if strcmp(app.FiletypeDropDown.Value,'HARP')
                 tmp=strsplit(app.fname,'_');
                 app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
-            elseif strcmp(app.DatasetDropDown.Value,'SoundTrap')
+            elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                 tmp=strsplit(app.fname,'.');
                 app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
-            elseif strcmp(app.DatasetDropDown.Value,'Other')
+            elseif strcmp(app.FiletypeDropDown.Value,'Other')
                 app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
                 app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
                 if isempty(app.tstart_file)
@@ -860,17 +860,17 @@ classdef Audiorama < matlab.apps.AppBase
             app.ExportwavButton.Position = [1267 458 110 43];
             app.ExportwavButton.Text = 'Export .wav';
 
-            % Create DatasetDropDownLabel
-            app.DatasetDropDownLabel = uilabel(app.UIFigure);
-            app.DatasetDropDownLabel.HorizontalAlignment = 'right';
-            app.DatasetDropDownLabel.Position = [10 475 47 22];
-            app.DatasetDropDownLabel.Text = 'Dataset';
+            % Create FiletypeDropDownLabel
+            app.FiletypeDropDownLabel = uilabel(app.UIFigure);
+            app.FiletypeDropDownLabel.HorizontalAlignment = 'right';
+            app.FiletypeDropDownLabel.Position = [6 475 51 22];
+            app.FiletypeDropDownLabel.Text = 'File type';
 
-            % Create DatasetDropDown
-            app.DatasetDropDown = uidropdown(app.UIFigure);
-            app.DatasetDropDown.Items = {'SoundTrap', 'HARP', 'Other'};
-            app.DatasetDropDown.Position = [65 471 157 29];
-            app.DatasetDropDown.Value = 'SoundTrap';
+            % Create FiletypeDropDown
+            app.FiletypeDropDown = uidropdown(app.UIFigure);
+            app.FiletypeDropDown.Items = {'SoundTrap', 'HARP', 'Other'};
+            app.FiletypeDropDown.Position = [65 471 157 29];
+            app.FiletypeDropDown.Value = 'SoundTrap';
 
             % Create OriginalLabel
             app.OriginalLabel = uilabel(app.UIFigure);
