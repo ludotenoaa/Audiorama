@@ -118,17 +118,15 @@ classdef Audiorama < matlab.apps.AppBase
                 % extract file start/end time
                 if strcmp(app.FiletypeDropDown.Value,'HARP')
                     tmp=strsplit(app.fname,'_');
-                    app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+                    app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
                 elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                     tmp=strsplit(app.fname,'.');
                     app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
                 elseif strcmp(app.FiletypeDropDown.Value,'Other')
-                    app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
-                    app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
-
-                    if isempty(app.tstart_file)
+                        
+                        fprintf('%s: file start date was ignored and set to default (2010-Jan-1 00:00:00).',app.fname)
                         app.tstart_file=datenum(2010,1,1,0,0,0);
-                    end
+        
 
                 end
                 I=audioinfo([app.fullpath,app.fname]);
@@ -204,10 +202,10 @@ classdef Audiorama < matlab.apps.AppBase
             % Read data for given start time and duration
             if strcmp(app.FiletypeDropDown.Value,'HARP')
                 [x,Fs,t,app.tstart_file,app.tend_file]=...
-                    read_HARP_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+                    read_acousticdata([app.fullpath,app.fname],'HARP',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                 [x,Fs,t,app.tstart_file,app.tend_file]=...
-                    read_SoundTrap_data([app.fullpath,app.fname],app.tstart,app.tstart+app.tlen/86400);
+                    read_acousticdata([app.fullpath,app.fname],'SoundTrap',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'Other')
                 I=audioinfo([app.fullpath,app.fname]);
                 Fs=I.SampleRate;
