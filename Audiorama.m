@@ -124,7 +124,7 @@ classdef Audiorama < matlab.apps.AppBase
                     app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
                 elseif strcmp(app.FiletypeDropDown.Value,'Other')
                         
-                        fprintf('%s: file start date was ignored and set to default (2010-Jan-1 00:00:00).',app.fname)
+                        fprintf('%s: file start date was ignored and set to default (2010-Jan-1 00:00:00).\n',app.fname)
                         app.tstart_file=datenum(2010,1,1,0,0,0);
         
 
