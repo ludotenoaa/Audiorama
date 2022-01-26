@@ -155,8 +155,16 @@ classdef Audiorama < matlab.apps.AppBase
                 app.ovrlap=app.OverlapEditField.Value;
                 app.Fmin=app.FminEditField.Value;
                 app.Fmax=app.FmaxEditField.Value;
-                app.dBmax=app.dBmaxEditField.Value;
+
+                if strcmp(app.FiletypeDropDown.Value,'HARP')
+                    app.dBmaxEditField.Value=-70;
+                    app.dBminEditField.Value=-110;
+                elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
+                    app.dBmaxEditField.Value=100;
+                    app.dBminEditField.Value=40;
+                end
                 app.dBmin=app.dBminEditField.Value;
+                app.dBmax=app.dBmaxEditField.Value;
 
                 % set default filtering settings
                 app.Flow=app.FlowEditField.Value;
@@ -201,10 +209,10 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Read data for given start time and duration
             if strcmp(app.FiletypeDropDown.Value,'HARP')
-                [x,Fs,t,app.tstart_file,app.tend_file]=...
+                [x,Fs,t,app.tstart_file,app.tend_file,calib]=...
                     read_acousticdata([app.fullpath,app.fname],'HARP',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                [x,Fs,t,app.tstart_file,app.tend_file]=...
+                [x,Fs,t,app.tstart_file,app.tend_file,calib]=...
                     read_acousticdata([app.fullpath,app.fname],'SoundTrap',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'Other')
                 I=audioinfo([app.fullpath,app.fname]);
@@ -234,7 +242,12 @@ classdef Audiorama < matlab.apps.AppBase
             ylabel(app.UIAxes,'Frequency (Hz)')
             xlim(app.UIAxes,[T(1) T(end)]); ylim(app.UIAxes,[app.Fmin app.Fmax])
 
-            cb=colorbar(app.UIAxes); ylabel(cb,'Power (dB)');
+            cb=colorbar(app.UIAxes); 
+            if calib
+                ylabel(cb,'dB (re 1 uPa)/Hz')
+            else
+                ylabel(cb,'dB (uncalibrated)/Hz');
+            end
             caxis(app.UIAxes,[app.dBmin app.dBmax]); colormap(app.UIAxes,'jet')
 
             set(app.UIAxes,'FontSize',15)
@@ -433,7 +446,12 @@ classdef Audiorama < matlab.apps.AppBase
             xlabel('Time (s)'); ylabel('Frequency (Hz)')
             xlim([app.T(1) app.T(end)]); ylim([app.Fmin app.Fmax])
 
-            cb=colorbar; ylabel(cb,'Power (dB)');
+            cb=colorbar; 
+            if calib
+                ylabel(cb,'dB (re 1 uPa)/Hz')
+            else
+                ylabel(cb,'dB (uncalibrated)/Hz');
+            end
             caxis([app.dBmin app.dBmax]); colormap('jet')
 
             set(gca,'FontSize',12)
@@ -758,13 +776,12 @@ classdef Audiorama < matlab.apps.AppBase
             app.dBminEditField = uieditfield(app.UIFigure, 'numeric');
             app.dBminEditField.ValueChangedFcn = createCallbackFcn(app, @dBminEditFieldValueChanged, true);
             app.dBminEditField.Position = [744 449 40 23];
-            app.dBminEditField.Value = -110;
 
             % Create dBmaxEditField
             app.dBmaxEditField = uieditfield(app.UIFigure, 'numeric');
             app.dBmaxEditField.ValueChangedFcn = createCallbackFcn(app, @dBmaxEditFieldValueChanged, true);
             app.dBmaxEditField.Position = [744 421 40 23];
-            app.dBmaxEditField.Value = -70;
+            app.dBmaxEditField.Value = 100;
 
             % Create SpectrogramButton
             app.SpectrogramButton = uibutton(app.UIFigure, 'push');
