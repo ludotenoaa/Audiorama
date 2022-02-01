@@ -92,6 +92,7 @@ classdef Audiorama < matlab.apps.AppBase
         Flow
         Fhigh
         xfilt
+        calib
     end
 
     methods (Access = private)
@@ -118,7 +119,11 @@ classdef Audiorama < matlab.apps.AppBase
                 % extract file start/end time
                 if strcmp(app.FiletypeDropDown.Value,'HARP')
                     tmp=strsplit(app.fname,'_');
-                    app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
+                    if length(tmp{4})==6
+                        app.tstart_file=datenum([tmp{4},tmp{5}],'yymmddHHMMSS');
+                    else
+                        app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
+                    end
                 elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                     tmp=strsplit(app.fname,'.');
                     app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
@@ -209,10 +214,10 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Read data for given start time and duration
             if strcmp(app.FiletypeDropDown.Value,'HARP')
-                [x,Fs,t,app.tstart_file,app.tend_file,calib]=...
+                [x,Fs,t,app.tstart_file,app.tend_file,app.calib]=...
                     read_acousticdata([app.fullpath,app.fname],'HARP',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                [x,Fs,t,app.tstart_file,app.tend_file,calib]=...
+                [x,Fs,t,app.tstart_file,app.tend_file,app.calib]=...
                     read_acousticdata([app.fullpath,app.fname],'SoundTrap',app.tstart,app.tstart+app.tlen/86400);
             elseif strcmp(app.FiletypeDropDown.Value,'Other')
                 I=audioinfo([app.fullpath,app.fname]);
@@ -243,7 +248,7 @@ classdef Audiorama < matlab.apps.AppBase
             xlim(app.UIAxes,[T(1) T(end)]); ylim(app.UIAxes,[app.Fmin app.Fmax])
 
             cb=colorbar(app.UIAxes); 
-            if calib
+            if app.calib
                 ylabel(cb,'dB (re 1 uPa)/Hz')
             else
                 ylabel(cb,'dB (uncalibrated)/Hz');
@@ -304,7 +309,11 @@ classdef Audiorama < matlab.apps.AppBase
             % extract file start/end time
             if strcmp(app.FiletypeDropDown.Value,'HARP')
                 tmp=strsplit(app.fname,'_');
-                app.tstart_file=datenum([tmp{5},tmp{6}],'yymmddHHMMSS');
+                if length(tmp{4})==6
+                    app.tstart_file=datenum([tmp{4},tmp{5}],'yymmddHHMMSS');
+                else
+                    app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
+                end
             elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
                 tmp=strsplit(app.fname,'.');
                 app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
@@ -447,7 +456,7 @@ classdef Audiorama < matlab.apps.AppBase
             xlim([app.T(1) app.T(end)]); ylim([app.Fmin app.Fmax])
 
             cb=colorbar; 
-            if calib
+            if app.calib
                 ylabel(cb,'dB (re 1 uPa)/Hz')
             else
                 ylabel(cb,'dB (uncalibrated)/Hz');
