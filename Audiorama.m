@@ -2,353 +2,267 @@ classdef Audiorama < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        UIFigure                  matlab.ui.Figure
-        Button_4                  matlab.ui.control.Button
-        Button_3                  matlab.ui.control.Button
-        SamplerateLabel           matlab.ui.control.Label
-        EffectiveLabel            matlab.ui.control.Label
-        DownsampleEditField       matlab.ui.control.NumericEditField
-        DownsampleEditFieldLabel  matlab.ui.control.Label
-        OriginalLabel             matlab.ui.control.Label
-        FiletypeDropDown          matlab.ui.control.DropDown
-        FiletypeDropDownLabel     matlab.ui.control.Label
-        ExportwavButton           matlab.ui.control.Button
-        ExportDataLabel           matlab.ui.control.Label
-        FileendLabel              matlab.ui.control.Label
-        FilestartLabel            matlab.ui.control.Label
-        FhighEditField            matlab.ui.control.NumericEditField
-        FhighEditFieldLabel       matlab.ui.control.Label
-        FlowEditField             matlab.ui.control.NumericEditField
-        FlowEditFieldLabel        matlab.ui.control.Label
-        Switch                    matlab.ui.control.Switch
-        Button_2                  matlab.ui.control.Button
-        Button                    matlab.ui.control.Button
-        StopButton                matlab.ui.control.Button
-        SelectfileButton          matlab.ui.control.Button
-        PlayButton                matlab.ui.control.Button
-        TimeSeriesButton          matlab.ui.control.Button
-        SpectrogramButton         matlab.ui.control.Button
-        dBmaxEditField            matlab.ui.control.NumericEditField
-        dBminEditField            matlab.ui.control.NumericEditField
-        FmaxEditField             matlab.ui.control.NumericEditField
-        FminEditField             matlab.ui.control.NumericEditField
-        OverlapEditField          matlab.ui.control.NumericEditField
-        NfftDropDown              matlab.ui.control.DropDown
-        WindowDropDown            matlab.ui.control.DropDown
-        DurationEditField         matlab.ui.control.NumericEditField
-        SecondEditField           matlab.ui.control.NumericEditField
-        MinuteEditField           matlab.ui.control.NumericEditField
-        HourEditField             matlab.ui.control.NumericEditField
-        DateDatePicker            matlab.ui.control.DatePicker
-        UpdateButton              matlab.ui.control.Button
-        FminEditFieldLabel        matlab.ui.control.Label
-        FilterLabel               matlab.ui.control.Label
-        dBmaxEditFieldLabel       matlab.ui.control.Label
-        dBminEditFieldLabel       matlab.ui.control.Label
-        NfftDropDownLabel         matlab.ui.control.Label
-        ExportFiguresLabel        matlab.ui.control.Label
-        StarttimeLabel            matlab.ui.control.Label
-        FmaxEditFieldLabel        matlab.ui.control.Label
-        PlaybackLabel             matlab.ui.control.Label
-        WindowDropDownLabel       matlab.ui.control.Label
-        FilenameLabel             matlab.ui.control.Label
-        SpectrogramLabel          matlab.ui.control.Label
-        DurationEditFieldLabel    matlab.ui.control.Label
-        OverlapEditFieldLabel     matlab.ui.control.Label
-        SecondEditFieldLabel      matlab.ui.control.Label
-        MinuteEditFieldLabel      matlab.ui.control.Label
-        HourEditFieldLabel        matlab.ui.control.Label
-        Slider                    matlab.ui.control.Slider
-        DateDatePickerLabel       matlab.ui.control.Label
-        UIAxes                    matlab.ui.control.UIAxes
+        UIFigure                    matlab.ui.Figure
+        Slider                      matlab.ui.control.Slider
+        FileinfoPanel               matlab.ui.container.Panel
+        FsLabel                     matlab.ui.control.Label
+        EndtimeLabel                matlab.ui.control.Label
+        StarttimeLabel              matlab.ui.control.Label
+        NameLabel                   matlab.ui.control.Label
+        SkipPanel                   matlab.ui.container.Panel
+        SkipBckwdButton             matlab.ui.control.Button
+        SkipFwdButton               matlab.ui.control.Button
+        FwdButton                   matlab.ui.control.Button
+        BckwdButton                 matlab.ui.control.Button
+        PlaybackPanel               matlab.ui.container.Panel
+        StopButton                  matlab.ui.control.Button
+        PlayButton                  matlab.ui.control.Button
+        ExportPanel                 matlab.ui.container.Panel
+        TimeseriesButton            matlab.ui.control.Button
+        wavButton                   matlab.ui.control.Button
+        SpectrogramButton           matlab.ui.control.Button
+        FilterPanel                 matlab.ui.container.Panel
+        FilterHzLabel               matlab.ui.control.Label
+        FilterFmaxEditField         matlab.ui.control.NumericEditField
+        FilterFminEditField         matlab.ui.control.NumericEditField
+        FilterSwitch                matlab.ui.control.Switch
+        SpectrogramPanel            matlab.ui.container.Panel
+        FreezeSwitch                matlab.ui.control.Switch
+        FreezesettingsSwitchLabel   matlab.ui.control.Label
+        dBLabel                     matlab.ui.control.Label
+        HzLabel                     matlab.ui.control.Label
+        dBmaxEditField              matlab.ui.control.NumericEditField
+        dBminEditField              matlab.ui.control.NumericEditField
+        FmaxEditField               matlab.ui.control.NumericEditField
+        FminEditField               matlab.ui.control.NumericEditField
+        AxesLabel                   matlab.ui.control.Label
+        PercentLabel                matlab.ui.control.Label
+        OverlapEditField            matlab.ui.control.NumericEditField
+        OverlapEditFieldLabel       matlab.ui.control.Label
+        NFFTEditField               matlab.ui.control.NumericEditField
+        NFFTEditFieldLabel          matlab.ui.control.Label
+        WindowlengthEditField       matlab.ui.control.NumericEditField
+        WindowlengthEditFieldLabel  matlab.ui.control.Label
+        DurationPanel               matlab.ui.container.Panel
+        DurationEditField           matlab.ui.control.NumericEditField
+        sEditField_2Label           matlab.ui.control.Label
+        StartTimePanel              matlab.ui.container.Panel
+        sEditField                  matlab.ui.control.NumericEditField
+        sEditFieldLabel             matlab.ui.control.Label
+        minEditField                matlab.ui.control.NumericEditField
+        minEditFieldLabel           matlab.ui.control.Label
+        hrEditField                 matlab.ui.control.NumericEditField
+        hrEditFieldLabel            matlab.ui.control.Label
+        DateDatePicker              matlab.ui.control.DatePicker
+        DateDatePickerLabel         matlab.ui.control.Label
+        LoadfileButton              matlab.ui.control.Button
+        UpdateButton                matlab.ui.control.Button
+        UIAxes                      matlab.ui.control.UIAxes
     end
 
-
+    
     properties (Access = private)
-        fname
-        fullpath
-        x
-        t
-        Fs
-        P
-        T
-        F
-        tstart_file
-        tend_file
-        tstart
-        tlen
-        N
-        Nfft
-        ovrlap
-        Fmin
-        Fmax
-        dBmin
-        dBmax
-        HH
-        MM
-        SS
-        input_time
-        quick_update
-        Flow
-        Fhigh
-        xfilt
-        calib
+        fpath           % path to file 
+        fname           % file name
+        Fs              % sample rate (Hz)
+        ftstart         % file start time
+        ftend           % file end time
+        fduration       % file duration (s)
+        tstart          % window start timee
+        duration        % duration (s)
+        x               % audio data
+        default         % default settings flag
+        inputimetype    % type of input time
     end
-
+    
     methods (Access = private)
 
-        %% Initialization function
-        function initialize(app)
+        %% initialize file
+        function app=initialize(app)
 
-            % select file in finder
-            if isempty(app.fullpath)
-                [tmp_name,tmp_path]= uigetfile({'*.*','All Files (*.*)'},'File Selector');
-            else
-                [tmp_name,tmp_path]= uigetfile({'*.*','All Files (*.*)'},'File Selector',app.fullpath);
+            % displays file name
+            app.NameLabel.Text=['Name: ',app.fname];
+
+            % audio file info
+            I=audioinfo([app.fpath,app.fname]);
+
+            % Fs
+            app.Fs=I.SampleRate;
+            app.FsLabel.Text=sprintf('Fs = %i Hz',round(app.Fs));
+
+            % file duration
+            app.fduration=I.Duration;
+            
+            % file start/end 
+            try
+                app.ftstart=getFiledate(app.fname);
+            catch
+                app.ftstart=0;
             end
-            figure(app.UIFigure)
-
-            % if file is selected
-            if tmp_name~=0
-                app.fname=tmp_name;
-                app.fullpath=tmp_path;
-
-                % displays file name
-                app.FilenameLabel.Text=['Filename: ',app.fname];
-
-                % extract file start/end time
-                if strcmp(app.FiletypeDropDown.Value,'HARP')
-                    tmp=strsplit(app.fname,'_');
-                    if length(tmp{4})==6
-                        app.tstart_file=datenum([tmp{4},tmp{5}],'yymmddHHMMSS');
-                    else
-                        app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
-                    end
-                elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                    tmp=strsplit(app.fname,'.');
-                    app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
-                elseif strcmp(app.FiletypeDropDown.Value,'Other')
-                        
-                        fprintf('%s: file start date was ignored and set to default (2010-Jan-1 00:00:00).\n',app.fname)
-                        app.tstart_file=datenum(2010,1,1,0,0,0);
-        
-
-                end
-                I=audioinfo([app.fullpath,app.fname]);
-                app.tend_file=app.tstart_file+I.Duration/86400;
-                app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
-                app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
-
-                app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
-
-                % sets slider limits based based on file start/end time
-                app.Slider.Limits=[0 app.tend_file-app.tstart_file];
-
-                % set file start time as default time
-                tmp=datestr(app.tstart_file,'yyyy-mm-dd-HH-MM-SS');
-                tmp=strsplit(tmp,'-');
-                app.HourEditField.Value=str2double(tmp{4});
-                app.MinuteEditField.Value=str2double(tmp{5});
-                app.SecondEditField.Value=str2double(tmp{6});
-                app.DateDatePicker.Value=datetime(str2double(tmp{1}),...
-                    str2double(tmp{2}),str2double(tmp{3}));
-
-                % set default duration and spectrogram settings
-                app.tlen=app.DurationEditField.Value;
-                app.N=str2double(app.WindowDropDown.Value);
-                app.Nfft=str2double(app.NfftDropDown.Value);
-                app.ovrlap=app.OverlapEditField.Value;
-                app.Fmin=app.FminEditField.Value;
-                app.Fmax=app.FmaxEditField.Value;
-
-                if strcmp(app.FiletypeDropDown.Value,'HARP')
-                    app.dBmaxEditField.Value=-70;
-                    app.dBminEditField.Value=-110;
-                elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                    app.dBmaxEditField.Value=100;
-                    app.dBminEditField.Value=40;
-                end
-                app.dBmin=app.dBminEditField.Value;
-                app.dBmax=app.dBmaxEditField.Value;
-
-                % set default filtering settings
-                app.Flow=app.FlowEditField.Value;
-                app.Fhigh=app.FhighEditField.Value;
-
-                % plot spectrogram
-                app.input_time='manual';
-                app.quick_update=0;
-                [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
+            if isnan(app.ftstart)
+                app.ftstart=0; 
             end
+             % set file start as window start
+            app.tstart=app.ftstart; 
+
+            app.ftend=app.ftstart+app.fduration/86400;
+            app.StarttimeLabel.Text=['Start time:    ',datestr(app.ftstart,'dd-mmm-yyyy HH:MM:SS')];
+            app.EndtimeLabel.Text=['End time:     ',datestr(app.ftend,'dd-mmm-yyyy HH:MM:SS')];
+       
+            app.StarttimeLabel.HorizontalAlignment='right';
+            app.EndtimeLabel.HorizontalAlignment='right';
+            app=update_date_display(app);
+
+            app.Slider.Limits=[0 app.ftend-app.ftstart];
+            app.Slider.Value=0;
+
+            app.inputimetype='default';
+
+            % read acoustic data
+            app=readin(app);
+
+            % update spectrogram
+            app=update(app);
+
+            % remove default settings flag after first initialization
+            app.default=0;
         end
 
-        %% Update start time and spectrogram function
-        function [x,t,Fs,P,T,F]=update_func(app)
+        %% read acoustic data
+        function app=readin(app)
+            
+            if app.default
+                if app.fduration<60
+                    app.duration=floor(app.fduration);
+                else
+                    app.duration=60;
+                end
+                app.DurationEditField.Value=app.duration;
+            elseif (app.tstart-app.ftstart)*86400+app.duration<app.fduration
+                app.duration=app.DurationEditField.Value;
+            end
+    
+            switch app.inputimetype
+                case 'exact'
+                    tmp=datevec(app.DateDatePicker.Value);
+                    app.tstart=datenum(tmp(1),tmp(2),tmp(3),app.hrEditField.Value,app.minEditField.Value,app.sEditField.Value);
+            
+                    app.Slider.Value=app.tstart-app.ftstart;
+                case 'slider'
+                    app.tstart=app.Slider.Value+app.ftstart;
+                    app=update_date_display(app);
+            end
+            app=update_date_display(app);
 
-            % set start time from manual date/time input values
-            if strcmp(app.input_time,'manual')==1
-                tmp=datestr(app.DateDatePicker.Value,'yyyy-mm-dd');
-                tmp=strsplit(tmp,'-');
+            % window first/last samples in file
+            nlim(1)=round(((app.tstart-app.ftstart)*86400)*app.Fs)+1;
+            nlim(2)=round(nlim(1)+app.duration*app.Fs)-1;
 
-                app.tstart=datenum(str2double(tmp{1}),str2double(tmp{2}),str2double(tmp{3}),...
-                    app.HourEditField.Value,...
-                    app.MinuteEditField.Value,...
-                    app.SecondEditField.Value);
+            % read audio file
+            app.x=audioread(fullfile(app.fpath,app.fname),nlim);
 
-                % start time based on slider position
+            % remove mean
+            app.x=app.x-mean(app.x);
+        end
+
+        %% update spectrogram
+        function app=update(app)
+    
+            % read acoustic data if window duration has changed or new start time
+            app.duration=app.DurationEditField.Value;
+            if app.duration~=length(app.x)/app.Fs || ~strcmp(app.inputimetype,'default')
+                app=readin(app);
+            end
+
+            if ~app.default
+                % read input spectrogram settings
+                N=2^nextpow2(app.WindowlengthEditField.Value);
+                NFFT=2^nextpow2(app.NFFTEditField.Value);
+                app.WindowlengthEditField.Value=N;
+                app.NFFTEditField.Value=NFFT;
+                Overlap=app.OverlapEditField.Value;
+                Fmin=app.FminEditField.Value;
+                Fmax=app.FmaxEditField.Value;
+                dBmin=app.dBminEditField.Value;
+                dBmax=app.dBmaxEditField.Value;
             else
-
-                % update display date
-                app.DateDatePicker.Value=datetime(str2double(datestr(app.tstart,'yyyy')),...
-                    str2double(datestr(app.tstart,'mm')),...
-                    str2double(datestr(app.tstart,'dd')));
-
-                % update display time
-                app.HourEditField.Value=str2double(datestr(app.tstart,'HH'));
-                app.MinuteEditField.Value=str2double(datestr(app.tstart,'MM'));
-                app.SecondEditField.Value=str2double(datestr(app.tstart,'SS'));
+                % default settings
+                N=2^(nextpow2(app.Fs/5));
+                NFFT=N*2;
+                Overlap=75;
+                Fmin=0; Fmax=round(app.Fs/4);
+                app.WindowlengthEditField.Value=N;
+                app.NFFTEditField.Value=NFFT;
+                app.OverlapEditField.Value=Overlap;
+                app.FminEditField.Value=Fmin;
+                app.FmaxEditField.Value=Fmax;
             end
-
-            % update slider position
-            app.Slider.Value=app.tstart-app.tstart_file;
-
-            % Read data for given start time and duration
-            if strcmp(app.FiletypeDropDown.Value,'HARP')
-                [x,Fs,t,app.tstart_file,app.tend_file,app.calib]=...
-                    read_acousticdata([app.fullpath,app.fname],'HARP',app.tstart,app.tstart+app.tlen/86400);
-            elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                [x,Fs,t,app.tstart_file,app.tend_file,app.calib]=...
-                    read_acousticdata([app.fullpath,app.fname],'SoundTrap',app.tstart,app.tstart+app.tlen/86400);
-            elseif strcmp(app.FiletypeDropDown.Value,'Other')
-                I=audioinfo([app.fullpath,app.fname]);
-                Fs=I.SampleRate;
-                N=round(Fs*(([app.tstart app.tstart+app.tlen/86400]-app.tstart_file)*86400));
-                N(1)=N(1)+1;
-                [x,Fs]=audioread([app.fullpath,app.fname],N);
-            end
-
-            x=x-mean(x);
-
-            x=decimate(x,app.DownsampleEditField.Value);
-            Fs=Fs/app.DownsampleEditField.Value;
-
-            app.EffectiveLabel.Text=sprintf('Effective: %i Hz',Fs);
-
-            t=[0:1:length(x)-1]'/Fs;
-
 
             % Compute spectrogram
-            [~,F,T,P]=spectrogram(x,app.N,round(app.N*app.ovrlap),app.Nfft,Fs);
+            [~,F,T,P]=spectrogram(app.x,N,round(N*Overlap/100),NFFT,app.Fs);
 
             % Plot spectrogram
-            imagesc(app.UIAxes,T,F,10*log10(P)); set(app.UIAxes,'YDir','Normal')
+            imagesc(app.UIAxes,T,F,10*log10(P)); set(app.UIAxes,'YDir','Normal');
 
             xlabel(app.UIAxes,'Time (s)')
             ylabel(app.UIAxes,'Frequency (Hz)')
-            xlim(app.UIAxes,[T(1) T(end)]); ylim(app.UIAxes,[app.Fmin app.Fmax])
+            xlim(app.UIAxes,[T(1) T(end)])
+            ylim(app.UIAxes,[Fmin Fmax])
 
+            colormap(app.UIAxes,'jet')
             cb=colorbar(app.UIAxes); 
-            if app.calib
-                ylabel(cb,'dB (re 1 uPa)/Hz')
-            else
-                ylabel(cb,'dB (uncalibrated)/Hz');
+            ylabel(cb,'dB/Hz');
+            
+            if app.default
+                app.dBminEditField.Value=round(cb.Limits(1));
+                app.dBmaxEditField.Value=round(cb.Limits(2));
+                dBmin=app.dBminEditField.Value;
+                dBmax=app.dBmaxEditField.Value;
             end
-            caxis(app.UIAxes,[app.dBmin app.dBmax]); colormap(app.UIAxes,'jet')
+            caxis(app.UIAxes,[dBmin dBmax])   
 
-            set(app.UIAxes,'FontSize',15)
-            title(app.UIAxes,'')
+            app.inputimetype='initial';
         end
 
-        %% Filtering function
-        function xfilt=custom_filt(app)
+        %% determine file start date from name
+        function ftsart=getFiledate(fname)
 
-            % highpass
-            if isempty(app.Flow) || isnan(app.Flow)
-                m=[0 1];
-                f=[app.Fhigh app.Fhigh+0.1*app.Fhigh];
-                dev=[0.05 0.01];
-                % lowpass
-            elseif isempty(app.Fhigh) || isnan(app.Fhigh)
-                m=[1 0];
-                f=[app.Flow-0.1*app.Flow app.Flow];
-                dev=[0.01 0.05];
-                % bandpass
-            else
-                m=[0 1 0];
-                fmean=mean([app.Flow app.Fhigh]);
-                f=[app.Flow-0.1*fmean app.Flow app.Fhigh app.Fhigh+0.1*fmean];
-                dev=[0.05 0.01 0.05];
-            end
+            nfiles=size(fname,1);
 
-            % design filter
-            [n,fo,mo,w]=firpmord(f,m,dev,app.Fs);
-            B=firpm(n,fo,mo,w);
+            for fIdx=1:nfiles
+                tmp=filename(fIdx,:);
 
-            % apply filter
-            xfilt=filtfilt(B,1,app.x);
-        end
-
-        %% switch to next file
-
-        function next_file(app,m)
-
-            D=dir(app.fullpath);
-
-            for k=1:length(D)
-                if strcmp(D(k).name,app.fname)==1
-                    app.fname=D(k+m).name;
-                    break
-                end
-            end
-
-
-
-            % displays file name
-            app.FilenameLabel.Text=['Filename: ',app.fname];
-
-            % extract file start/end time
-            if strcmp(app.FiletypeDropDown.Value,'HARP')
-                tmp=strsplit(app.fname,'_');
-                if length(tmp{4})==6
-                    app.tstart_file=datenum([tmp{4},tmp{5}],'yymmddHHMMSS');
+                dateexpr='(?<yr>\d\d)(?<mon>\d\d)(?<day>\d\d)[-_-. ](?<hr>\d\d)(?<min>\d\d)(?<s>\d\d(\.\d\d\d)?)';
+                match=regexp(tmp,dateexpr,'names');
+                if isempty(match)
+                    dateexpr='[_-. ](?<yr>(\d\d)?\d\d)(?<mon>\d\d)(?<day>\d\d)[_-. ]'; %date only
+                    match=regexp(tmp, dateexpr, 'names');
+                    if isempty(match)
+                        ftsart(fIdx,:)=nan;
+                    else
+                        ftsart(fIdx,:)=datenum([str2double(match.yr) str2double(match.mon) str2double(match.day)]);
+                    end
                 else
-                    app.tstart_file=datenum([tmp{5},tmp{6}(1:6)],'yymmddHHMMSS');
+                    ftsart(fIdx,:)=datenum([str2double(match.yr)+2000 str2double(match.mon) str2double(match.day) ...
+                        str2double(match.hr) str2double(match.min) str2double(match.s)]);
                 end
-            elseif strcmp(app.FiletypeDropDown.Value,'SoundTrap')
-                tmp=strsplit(app.fname,'.');
-                app.tstart_file=datenum(tmp{2},'yymmddHHMMSS');
-            elseif strcmp(app.FiletypeDropDown.Value,'Other')
-                app.tstart_file=input('Enter start date/time manually (yymmddHHMMSS) or press Return to ignore: \n');
-                app.tstart_file=datenum(num2str(app.tstart_file),'yymmddHHMMSS');
-                if isempty(app.tstart_file)
-                    app.tstart_file=datenum(2010,1,1,0,0,0);
-                end
-
             end
-            I=audioinfo([app.fullpath,app.fname]);
-            app.tend_file=app.tstart_file+I.Duration/86400;
-            app.FilestartLabel.Text=['File start:   ',datestr(app.tstart_file,'dd-mmm-yyyy HH:MM:SS')];
-            app.FileendLabel.Text=['File end:    ',datestr(app.tend_file,'dd-mmm-yyyy HH:MM:SS')];
-
-            app.OriginalLabel.Text=sprintf('Original: %i Hz',I.SampleRate);
-
-            % sets slider limits based based on file start/end time
-            app.Slider.Limits=[0 app.tend_file-app.tstart_file];
-
-            % set file start time as default time
-            tmp=datestr(app.tstart_file,'yyyy-mm-dd-HH-MM-SS');
-            tmp=strsplit(tmp,'-');
-            app.HourEditField.Value=str2double(tmp{4});
-            app.MinuteEditField.Value=str2double(tmp{5});
-            app.SecondEditField.Value=str2double(tmp{6});
-            app.DateDatePicker.Value=datetime(str2double(tmp{1}),...
-                str2double(tmp{2}),str2double(tmp{3}));
-
-            % plot spectrogram
-            app.input_time='manual';
-            app.quick_update=0;
-            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
-
+        end
+        
+        %% update display start time
+        function app=update_date_display(app)    
+                % update display date
+                if app.ftstart
+                    app.DateDatePicker.Value=datetime(str2double(datestr(app.tstart,'yyyy')),...
+                    str2double(datestr(app.tstart,'mm')),...
+                    str2double(datestr(app.tstart,'dd')));
+                else
+                    app.DateDatePicker.Value=datetime(0,1,1);
+                end
+                % update display time
+                app.hrEditField.Value=str2double(datestr(app.tstart,'HH'));
+                app.minEditField.Value=str2double(datestr(app.tstart,'MM'));
+                app.sEditField.Value=str2double(datestr(app.tstart,'SS'));
         end
 
     end
@@ -360,28 +274,39 @@ classdef Audiorama < matlab.apps.AppBase
         % Code that executes after component creation
         function startupFcn(app)
             % app name
-            app.UIFigure.Name='Audiorama';
+            app.UIFigure.Name='Audiorama 2.0 by Ludovic Tenorio-Hallé (2022)';
+        end
+
+        % Button pushed function: LoadfileButton
+        function LoadfileButtonPushed(app, event)
+            if isempty(app.fpath)
+                [tmp_name,tmp_path]= uigetfile({'*.wav*'},'Audiorama: select audio file');
+            else
+                [tmp_name,tmp_path]= uigetfile({'*.wav*'},'Audiorama: select audio file',app.fpath);
+            end
+            figure(app.UIFigure)
+
+            % if file is selected, assign file name and path and initialize
+            if tmp_name~=0
+                app.fname=tmp_name;
+                app.fpath=tmp_path;
+                if strcmp(app.FreezeSwitch.Value,'On')
+                    app.default=0;
+                else
+                    app.default=1;
+                end
+                app=initialize(app);
+            end     
         end
 
         % Button pushed function: UpdateButton
         function UpdateButtonPushed(app, event)
-            if ~app.quick_update
-                [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
-            end
-            app.quick_update=0;
+            app=update(app);
         end
 
         % Button pushed function: PlayButton
         function PlayButtonPushed(app, event)
-
-            if strcmp(app.Switch.Value,'On')==1
-
-                app.xfilt=custom_filt(app);
-                soundsc(app.xfilt,app.Fs)
-
-            else
-                soundsc(app.x,app.Fs)
-            end
+            soundsc(app.x,app.Fs)
         end
 
         % Button pushed function: StopButton
@@ -389,188 +314,126 @@ classdef Audiorama < matlab.apps.AppBase
             clear sound
         end
 
-        % Value changed function: Slider
-        function SliderValueChanged(app, event)
-            app.tstart=app.Slider.Value+app.tstart_file;
-            app.input_time='slider';
+        % Button pushed function: FwdButton
+        function FwdButtonPushed(app, event)
+            try
+                app.tstart=app.tstart+(app.duration/2)/86400;
+                app=readin(app);
+            catch
+                beep
+                app.tstart=app.ftend-app.duration/86400;
+                app=readin(app);
+                disp('Reached edge of audio file.')
+            end
+            app=update(app);
+            app.Slider.Value=app.tstart-app.ftstart;
+            app=update_date_display(app);
         end
 
-        % Value changed function: SecondEditField
-        function SecondEditFieldValueChanged(app, event)
-            app.SS=app.SecondEditField.Value;
-            app.input_time='manual';
+        % Button pushed function: BckwdButton
+        function BckwdButtonPushed(app, event)
+            try
+                tmp=app.tstart;
+                app.tstart=app.tstart-(app.duration/2)/86400;
+                app=readin(app);
+            catch
+                beep
+                app.tstart=app.ftstart;
+                app=readin(app);
+                disp('Reached edge audio file.')
+            end
+            app=update(app);
+            app.Slider.Value=app.tstart-app.ftstart;
+            app=update_date_display(app);
+        end
+
+        % Button pushed function: SkipFwdButton
+        function SkipFwdButtonPushed(app, event)
+            % load directory
+            D=dir(app.fpath);
+            
+            % find current file
+            I=find(contains({D.name},app.fname));
+    
+            % move to next wav file
+            found_next_wavfile=0;
+            while ~found_next_wavfile
+                I=I+1;
+                if I>length(D)
+                    disp('Reached last readable audio file in folder.')
+                    beep; return
+                end
+                [~,~,ext]=fileparts(fullfile(app.fpath,D(I).name));
+                if strcmp(ext,'.wav')==1
+                    found_next_wavfile=1;
+                end
+            end
+            
+            % assign new file name and re-initialize 
+            app.fname=D(I).name;
+            app=initialize(app);
+        end
+
+        % Button pushed function: SkipBckwdButton
+        function SkipBckwdButtonPushed(app, event)
+            if app.tstart~=app.ftstart
+                % go back to the start of the file
+                app.tstart=app.ftstart;
+                % read acoustic data
+                app=readin(app);
+                % update spectrogram
+                app=update(app);
+            else
+                % load directory
+                D=dir(app.fpath);
+
+                % find current file
+                I=find(contains({D.name},app.fname));
+
+                % move to next wav file
+                found_previous_wavfile=0;
+                while ~found_previous_wavfile
+                    I=I-1;
+                    if I==0
+                        disp('Reached first readable audio file in this folder.')
+                        beep; return
+                    end
+                    [~,~,ext]=fileparts(fullfile(app.fpath,D(I).name));
+                    if strcmp(ext,'.wav')==1
+                        found_previous_wavfile=1;
+                    end
+                end
+
+                % assign new file name and re-initialize
+                app.fname=D(I).name;
+                app=initialize(app);
+            end
+        end
+
+        % Value changed function: Slider
+        function SliderValueChanged(app, event)
+            slidervalue=app.Slider.Value;
+            app.inputimetype='slider';
         end
 
         % Value changed function: DateDatePicker
         function DateDatePickerValueChanged(app, event)
-            app.input_time='manual';
+            app.inputimetype='exact';
         end
 
-        % Value changed function: OverlapEditField
-        function OverlapEditFieldValueChanged(app, event)
-            app.ovrlap=app.OverlapEditField.Value;
+        % Value changed function: hrEditField
+        function hrEditFieldValueChanged(app, event)
+             app.inputimetype='exact';
         end
 
-        % Value changed function: MinuteEditField
-        function MinuteEditFieldValueChanged(app, event)
-            app.MM=app.MinuteEditField.Value;
-            app.input_time='manual';
+        % Value changed function: minEditField
+        function minEditFieldValueChanged(app, event)
+            app.inputimetype='exact';
         end
 
-        % Value changed function: HourEditField
-        function HourEditFieldValueChanged(app, event)
-            app.HH=app.HourEditField.Value;
-            app.input_time='manual';
-        end
-
-        % Button pushed function: Button_2
-        function Button_2Pushed(app, event)
-            app.tstart=app.tstart+(app.tlen/86400)/2;
-            app.input_time='slider';
-            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
-        end
-
-        % Button pushed function: Button
-        function ButtonPushed(app, event)
-            app.tstart=app.tstart-(app.tlen/86400)/2;
-            app.input_time='slider';
-            [app.x,app.t,app.Fs,app.P,app.T,app.F]=update_func(app);
-        end
-
-        % Value changed function: DurationEditField
-        function DurationEditFieldValueChanged(app, event)
-            app.tlen=app.DurationEditField.Value;
-        end
-
-        % Value changed function: WindowDropDown
-        function WindowDropDownValueChanged2(app, event)
-            app.N=str2double(app.WindowDropDown.Value);
-        end
-
-        % Button pushed function: SpectrogramButton
-        function SpectrogramButtonPushed(app, event)
-            figure()
-
-            imagesc(app.T,app.F,10*log10(app.P))
-            xlabel('Time (s)'); ylabel('Frequency (Hz)')
-            xlim([app.T(1) app.T(end)]); ylim([app.Fmin app.Fmax])
-
-            cb=colorbar; 
-            if app.calib
-                ylabel(cb,'dB (re 1 uPa)/Hz')
-            else
-                ylabel(cb,'dB (uncalibrated)/Hz');
-            end
-            caxis([app.dBmin app.dBmax]); colormap('jet')
-
-            set(gca,'FontSize',12)
-            set(gca,'YDir','Normal')
-            set(gcf,'Position',[75 350 1200 300])
-
-            title(sprintf('Filename: %s\nStart time: %s\nSpectrogram: Window = %i; Overlap = %.2f%%; Nfft = %i; Fs = %i Hz',...
-                app.fname,datestr(app.tstart),app.N,app.ovrlap,app.Nfft,app.Fs),'Interpreter','none')
-        end
-
-        % Value changed function: FmaxEditField
-        function FmaxEditFieldValueChanged(app, event)
-            app.Fmax=app.FmaxEditField.Value;
-            ylim(app.UIAxes,[app.Fmin app.Fmax])
-            app.quick_update=1;
-        end
-
-        % Button pushed function: TimeSeriesButton
-        function TimeSeriesButtonPushed(app, event)
-
-            figure()
-
-            if strcmp(app.Switch.Value,'On')==1
-
-                app.xfilt=custom_filt(app);
-                plot(app.t,app.xfilt)
-
-                title(sprintf('Filename: %s\nStart time: %s\nFilter: [%.2f %.2f Hz]; Fs = %i Hz',...
-                    app.fname,datestr(app.tstart),app.Flow,app.Fhigh,app.Fs),'Interpreter','none')
-
-            else
-                plot(app.t,app.x)
-                title(sprintf('Filename: %s\nStart time: %s\nFs = %i Hz',...
-                    app.fname,datestr(app.tstart),app.Fs),'Interpreter','none')
-            end
-            grid on
-            xlabel('Time (s)'); ylabel('Amplitude (uncalibrated)')
-
-            set(gca,'FontSize',12)
-            set(gcf,'Position',[75 350 1200 300])
-        end
-
-        % Value changed function: NfftDropDown
-        function NfftDropDownValueChanged(app, event)
-            app.Nfft=str2double(app.NfftDropDown.Value);
-        end
-
-        % Value changed function: dBmaxEditField
-        function dBmaxEditFieldValueChanged(app, event)
-            app.dBmax=app.dBmaxEditField.Value;
-            caxis(app.UIAxes,[app.dBmin app.dBmax]);
-            app.quick_update=1;
-        end
-
-        % Value changed function: dBminEditField
-        function dBminEditFieldValueChanged(app, event)
-            app.dBmin=app.dBminEditField.Value;
-            caxis(app.UIAxes,[app.dBmin app.dBmax]);
-            app.quick_update=1;
-        end
-
-        % Callback function
-        function FlowEditFieldValueChanged(app, event)
-            app.Flow=str2double(app.FlowEditField.Value);
-        end
-
-        % Callback function
-        function FhighEditFieldValueChanged(app, event)
-            app.Fhigh=str2double(app.FhighEditField.Value);
-        end
-
-        % Callback function
-        function PlayFilteredButtonPushed(app, event)
-            app.xfilt=custom_filt(app);
-            soundsc(app.xfilt,app.Fs)
-        end
-
-        % Button pushed function: SelectfileButton
-        function SelectfileButtonPushed(app, event)
-            initialize(app);
-        end
-
-        % Value changed function: FminEditField
-        function FminEditFieldValueChanged(app, event)
-            app.Fmin=app.FminEditField.Value;
-            ylim(app.UIAxes,[app.Fmin app.Fmax])
-            app.quick_update=1;
-        end
-
-        % Button pushed function: ExportwavButton
-        function ExportwavButtonPushed(app, event)
-            tmp=strsplit(app.fname,'.');
-            if strcmp(app.Switch.Value,'On')==1
-                app.xfilt=custom_filt(app);
-                wavname=sprintf('%s_Snippet_%s_%is_filtered.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
-                audiowrite(wavname,app.xfilt,app.Fs)
-            else
-                wavname=sprintf('%s_Snippet_%s_%is.wav',tmp{1},datestr(app.tstart,'yymmdd_HHMMSS'),round(app.tlen));
-                audiowrite(wavname,app.x,app.Fs)
-            end
-        end
-
-        % Button pushed function: Button_3
-        function Button_3Pushed(app, event)
-            next_file(app,1)
-        end
-
-        % Button pushed function: Button_4
-        function Button_4Pushed(app, event)
-            next_file(app,-1)
+        % Value changed function: sEditField
+        function sEditFieldValueChanged(app, event)
+            app.inputimetype='exact';
         end
     end
 
@@ -582,7 +445,7 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Create UIFigure and hide until all components are created
             app.UIFigure = uifigure('Visible', 'off');
-            app.UIFigure.Position = [100 150 1408 568];
+            app.UIFigure.Position = [100 100 1403 617];
             app.UIFigure.Name = 'MATLAB App';
 
             % Create UIAxes
@@ -590,352 +453,316 @@ classdef Audiorama < matlab.apps.AppBase
             xlabel(app.UIAxes, 'X')
             ylabel(app.UIAxes, 'Y')
             zlabel(app.UIAxes, 'Z')
-            app.UIAxes.Position = [1 1 1362 312];
-
-            % Create DateDatePickerLabel
-            app.DateDatePickerLabel = uilabel(app.UIFigure);
-            app.DateDatePickerLabel.HorizontalAlignment = 'right';
-            app.DateDatePickerLabel.Position = [259 505 31 22];
-            app.DateDatePickerLabel.Text = 'Date';
-
-            % Create Slider
-            app.Slider = uislider(app.UIFigure);
-            app.Slider.Limits = [0 1];
-            app.Slider.ValueChangedFcn = createCallbackFcn(app, @SliderValueChanged, true);
-            app.Slider.Position = [21 348 1361 3];
-
-            % Create HourEditFieldLabel
-            app.HourEditFieldLabel = uilabel(app.UIFigure);
-            app.HourEditFieldLabel.HorizontalAlignment = 'right';
-            app.HourEditFieldLabel.Position = [284 475 35 22];
-            app.HourEditFieldLabel.Text = 'Hour';
-
-            % Create MinuteEditFieldLabel
-            app.MinuteEditFieldLabel = uilabel(app.UIFigure);
-            app.MinuteEditFieldLabel.HorizontalAlignment = 'right';
-            app.MinuteEditFieldLabel.Position = [277 443 42 22];
-            app.MinuteEditFieldLabel.Text = 'Minute';
-
-            % Create SecondEditFieldLabel
-            app.SecondEditFieldLabel = uilabel(app.UIFigure);
-            app.SecondEditFieldLabel.HorizontalAlignment = 'right';
-            app.SecondEditFieldLabel.Position = [273 412 46 22];
-            app.SecondEditFieldLabel.Text = 'Second';
-
-            % Create OverlapEditFieldLabel
-            app.OverlapEditFieldLabel = uilabel(app.UIFigure);
-            app.OverlapEditFieldLabel.HorizontalAlignment = 'right';
-            app.OverlapEditFieldLabel.Position = [522 447 47 22];
-            app.OverlapEditFieldLabel.Text = 'Overlap';
-
-            % Create DurationEditFieldLabel
-            app.DurationEditFieldLabel = uilabel(app.UIFigure);
-            app.DurationEditFieldLabel.HorizontalAlignment = 'right';
-            app.DurationEditFieldLabel.Position = [434 433 51 22];
-            app.DurationEditFieldLabel.Text = 'Duration';
-
-            % Create SpectrogramLabel
-            app.SpectrogramLabel = uilabel(app.UIFigure);
-            app.SpectrogramLabel.HorizontalAlignment = 'center';
-            app.SpectrogramLabel.FontSize = 15;
-            app.SpectrogramLabel.FontWeight = 'bold';
-            app.SpectrogramLabel.Position = [567 540 161 24];
-            app.SpectrogramLabel.Text = 'Spectrogram';
-
-            % Create FilenameLabel
-            app.FilenameLabel = uilabel(app.UIFigure);
-            app.FilenameLabel.Position = [10 363 382 22];
-            app.FilenameLabel.Text = 'Filename:';
-
-            % Create WindowDropDownLabel
-            app.WindowDropDownLabel = uilabel(app.UIFigure);
-            app.WindowDropDownLabel.HorizontalAlignment = 'right';
-            app.WindowDropDownLabel.Position = [520 501 48 22];
-            app.WindowDropDownLabel.Text = 'Window';
-
-            % Create PlaybackLabel
-            app.PlaybackLabel = uilabel(app.UIFigure);
-            app.PlaybackLabel.HorizontalAlignment = 'center';
-            app.PlaybackLabel.FontSize = 15;
-            app.PlaybackLabel.FontWeight = 'bold';
-            app.PlaybackLabel.Position = [970 540 110 24];
-            app.PlaybackLabel.Text = 'Playback';
-
-            % Create FmaxEditFieldLabel
-            app.FmaxEditFieldLabel = uilabel(app.UIFigure);
-            app.FmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.FmaxEditFieldLabel.Position = [703 485 35 22];
-            app.FmaxEditFieldLabel.Text = 'Fmax';
-
-            % Create StarttimeLabel
-            app.StarttimeLabel = uilabel(app.UIFigure);
-            app.StarttimeLabel.HorizontalAlignment = 'center';
-            app.StarttimeLabel.FontSize = 15;
-            app.StarttimeLabel.FontWeight = 'bold';
-            app.StarttimeLabel.Position = [259 540 157 24];
-            app.StarttimeLabel.Text = 'Start time';
-
-            % Create ExportFiguresLabel
-            app.ExportFiguresLabel = uilabel(app.UIFigure);
-            app.ExportFiguresLabel.HorizontalAlignment = 'center';
-            app.ExportFiguresLabel.FontSize = 15;
-            app.ExportFiguresLabel.FontWeight = 'bold';
-            app.ExportFiguresLabel.Position = [1114 540 120 24];
-            app.ExportFiguresLabel.Text = 'Export Figures';
-
-            % Create NfftDropDownLabel
-            app.NfftDropDownLabel = uilabel(app.UIFigure);
-            app.NfftDropDownLabel.HorizontalAlignment = 'right';
-            app.NfftDropDownLabel.Position = [544 474 25 22];
-            app.NfftDropDownLabel.Text = 'Nfft';
-
-            % Create dBminEditFieldLabel
-            app.dBminEditFieldLabel = uilabel(app.UIFigure);
-            app.dBminEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBminEditFieldLabel.Position = [698 449 39 22];
-            app.dBminEditFieldLabel.Text = 'dBmin';
-
-            % Create dBmaxEditFieldLabel
-            app.dBmaxEditFieldLabel = uilabel(app.UIFigure);
-            app.dBmaxEditFieldLabel.HorizontalAlignment = 'right';
-            app.dBmaxEditFieldLabel.Position = [698 427 39 22];
-            app.dBmaxEditFieldLabel.Text = 'dBmax';
-
-            % Create FilterLabel
-            app.FilterLabel = uilabel(app.UIFigure);
-            app.FilterLabel.HorizontalAlignment = 'center';
-            app.FilterLabel.FontSize = 15;
-            app.FilterLabel.FontWeight = 'bold';
-            app.FilterLabel.Position = [820 540 110 24];
-            app.FilterLabel.Text = 'Filter';
-
-            % Create FminEditFieldLabel
-            app.FminEditFieldLabel = uilabel(app.UIFigure);
-            app.FminEditFieldLabel.HorizontalAlignment = 'right';
-            app.FminEditFieldLabel.Position = [706 505 32 22];
-            app.FminEditFieldLabel.Text = 'Fmin';
+            app.UIAxes.Position = [10 11 1363 312];
 
             % Create UpdateButton
             app.UpdateButton = uibutton(app.UIFigure, 'push');
             app.UpdateButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateButtonPushed, true);
-            app.UpdateButton.Position = [10 506 212 58];
+            app.UpdateButton.Position = [10 526 255 81];
             app.UpdateButton.Text = 'Update';
 
+            % Create LoadfileButton
+            app.LoadfileButton = uibutton(app.UIFigure, 'push');
+            app.LoadfileButton.ButtonPushedFcn = createCallbackFcn(app, @LoadfileButtonPushed, true);
+            app.LoadfileButton.Position = [10 480 255 34];
+            app.LoadfileButton.Text = 'Load file';
+
+            % Create StartTimePanel
+            app.StartTimePanel = uipanel(app.UIFigure);
+            app.StartTimePanel.TitlePosition = 'centertop';
+            app.StartTimePanel.Title = 'Start Time';
+            app.StartTimePanel.FontWeight = 'bold';
+            app.StartTimePanel.FontSize = 15;
+            app.StartTimePanel.Position = [683 390 371 79];
+
+            % Create DateDatePickerLabel
+            app.DateDatePickerLabel = uilabel(app.StartTimePanel);
+            app.DateDatePickerLabel.HorizontalAlignment = 'right';
+            app.DateDatePickerLabel.Position = [3 14 31 22];
+            app.DateDatePickerLabel.Text = 'Date';
+
             % Create DateDatePicker
-            app.DateDatePicker = uidatepicker(app.UIFigure);
+            app.DateDatePicker = uidatepicker(app.StartTimePanel);
             app.DateDatePicker.ValueChangedFcn = createCallbackFcn(app, @DateDatePickerValueChanged, true);
-            app.DateDatePicker.Position = [302 505 114 22];
+            app.DateDatePicker.Position = [45 14 120 22];
 
-            % Create HourEditField
-            app.HourEditField = uieditfield(app.UIFigure, 'numeric');
-            app.HourEditField.Limits = [0 24];
-            app.HourEditField.ValueChangedFcn = createCallbackFcn(app, @HourEditFieldValueChanged, true);
-            app.HourEditField.Position = [336 475 56 22];
+            % Create hrEditFieldLabel
+            app.hrEditFieldLabel = uilabel(app.StartTimePanel);
+            app.hrEditFieldLabel.Position = [211 14 14 22];
+            app.hrEditFieldLabel.Text = 'hr';
 
-            % Create MinuteEditField
-            app.MinuteEditField = uieditfield(app.UIFigure, 'numeric');
-            app.MinuteEditField.Limits = [0 60];
-            app.MinuteEditField.ValueChangedFcn = createCallbackFcn(app, @MinuteEditFieldValueChanged, true);
-            app.MinuteEditField.Position = [336 443 56 22];
+            % Create hrEditField
+            app.hrEditField = uieditfield(app.StartTimePanel, 'numeric');
+            app.hrEditField.ValueChangedFcn = createCallbackFcn(app, @hrEditFieldValueChanged, true);
+            app.hrEditField.Position = [172 14 32 22];
 
-            % Create SecondEditField
-            app.SecondEditField = uieditfield(app.UIFigure, 'numeric');
-            app.SecondEditField.Limits = [0 60];
-            app.SecondEditField.ValueChangedFcn = createCallbackFcn(app, @SecondEditFieldValueChanged, true);
-            app.SecondEditField.Position = [336 413 56 22];
+            % Create minEditFieldLabel
+            app.minEditFieldLabel = uilabel(app.StartTimePanel);
+            app.minEditFieldLabel.Position = [266 14 25 22];
+            app.minEditFieldLabel.Text = 'min';
+
+            % Create minEditField
+            app.minEditField = uieditfield(app.StartTimePanel, 'numeric');
+            app.minEditField.ValueChangedFcn = createCallbackFcn(app, @minEditFieldValueChanged, true);
+            app.minEditField.Position = [228 14 32 22];
+
+            % Create sEditFieldLabel
+            app.sEditFieldLabel = uilabel(app.StartTimePanel);
+            app.sEditFieldLabel.Position = [356 14 16 22];
+            app.sEditFieldLabel.Text = 's';
+
+            % Create sEditField
+            app.sEditField = uieditfield(app.StartTimePanel, 'numeric');
+            app.sEditField.ValueChangedFcn = createCallbackFcn(app, @sEditFieldValueChanged, true);
+            app.sEditField.Position = [290 14 58 22];
+
+            % Create DurationPanel
+            app.DurationPanel = uipanel(app.UIFigure);
+            app.DurationPanel.TitlePosition = 'centertop';
+            app.DurationPanel.Title = 'Duration';
+            app.DurationPanel.FontWeight = 'bold';
+            app.DurationPanel.FontSize = 15;
+            app.DurationPanel.Position = [1062 390 162 79];
+
+            % Create sEditField_2Label
+            app.sEditField_2Label = uilabel(app.DurationPanel);
+            app.sEditField_2Label.Position = [140 14 16 22];
+            app.sEditField_2Label.Text = 's';
 
             % Create DurationEditField
-            app.DurationEditField = uieditfield(app.UIFigure, 'numeric');
-            app.DurationEditField.ValueChangedFcn = createCallbackFcn(app, @DurationEditFieldValueChanged, true);
-            app.DurationEditField.Position = [407 412 78 22];
-            app.DurationEditField.Value = 30;
+            app.DurationEditField = uieditfield(app.DurationPanel, 'numeric');
+            app.DurationEditField.Position = [34 14 98 22];
 
-            % Create WindowDropDown
-            app.WindowDropDown = uidropdown(app.UIFigure);
-            app.WindowDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
-            app.WindowDropDown.ValueChangedFcn = createCallbackFcn(app, @WindowDropDownValueChanged2, true);
-            app.WindowDropDown.Position = [583 501 100 22];
-            app.WindowDropDown.Value = '512';
+            % Create SpectrogramPanel
+            app.SpectrogramPanel = uipanel(app.UIFigure);
+            app.SpectrogramPanel.TitlePosition = 'centertop';
+            app.SpectrogramPanel.Title = 'Spectrogram';
+            app.SpectrogramPanel.FontWeight = 'bold';
+            app.SpectrogramPanel.FontSize = 15;
+            app.SpectrogramPanel.Position = [683 480 371 126];
 
-            % Create NfftDropDown
-            app.NfftDropDown = uidropdown(app.UIFigure);
-            app.NfftDropDown.Items = {'32', '64', '128', '256', '512', '1024', '2048', '4096', '8192', '16384', '32768', '65536'};
-            app.NfftDropDown.ValueChangedFcn = createCallbackFcn(app, @NfftDropDownValueChanged, true);
-            app.NfftDropDown.Position = [584 474 100 22];
-            app.NfftDropDown.Value = '1024';
+            % Create WindowlengthEditFieldLabel
+            app.WindowlengthEditFieldLabel = uilabel(app.SpectrogramPanel);
+            app.WindowlengthEditFieldLabel.HorizontalAlignment = 'right';
+            app.WindowlengthEditFieldLabel.Position = [5 65 84 22];
+            app.WindowlengthEditFieldLabel.Text = 'Window length';
+
+            % Create WindowlengthEditField
+            app.WindowlengthEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.WindowlengthEditField.Position = [104 65 38 22];
+
+            % Create NFFTEditFieldLabel
+            app.NFFTEditFieldLabel = uilabel(app.SpectrogramPanel);
+            app.NFFTEditFieldLabel.HorizontalAlignment = 'right';
+            app.NFFTEditFieldLabel.Position = [53 39 36 22];
+            app.NFFTEditFieldLabel.Text = 'NFFT';
+
+            % Create NFFTEditField
+            app.NFFTEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.NFFTEditField.Position = [104 39 38 22];
+
+            % Create OverlapEditFieldLabel
+            app.OverlapEditFieldLabel = uilabel(app.SpectrogramPanel);
+            app.OverlapEditFieldLabel.HorizontalAlignment = 'right';
+            app.OverlapEditFieldLabel.Position = [42 14 47 22];
+            app.OverlapEditFieldLabel.Text = 'Overlap';
 
             % Create OverlapEditField
-            app.OverlapEditField = uieditfield(app.UIFigure, 'numeric');
-            app.OverlapEditField.ValueChangedFcn = createCallbackFcn(app, @OverlapEditFieldValueChanged, true);
-            app.OverlapEditField.Position = [584 447 100 22];
-            app.OverlapEditField.Value = 0.75;
+            app.OverlapEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.OverlapEditField.Position = [104 14 38 22];
+
+            % Create PercentLabel
+            app.PercentLabel = uilabel(app.SpectrogramPanel);
+            app.PercentLabel.HorizontalAlignment = 'center';
+            app.PercentLabel.Position = [144 16 12 18];
+            app.PercentLabel.Text = '%';
+
+            % Create AxesLabel
+            app.AxesLabel = uilabel(app.SpectrogramPanel);
+            app.AxesLabel.HorizontalAlignment = 'center';
+            app.AxesLabel.Position = [180 71 43 22];
+            app.AxesLabel.Text = 'Axes';
 
             % Create FminEditField
-            app.FminEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FminEditField.ValueChangedFcn = createCallbackFcn(app, @FminEditFieldValueChanged, true);
-            app.FminEditField.Position = [744 505 40 22];
+            app.FminEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.FminEditField.Position = [224 71 49 22];
 
             % Create FmaxEditField
-            app.FmaxEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FmaxEditField.ValueChangedFcn = createCallbackFcn(app, @FmaxEditFieldValueChanged, true);
-            app.FmaxEditField.Position = [744 485 40 22];
-            app.FmaxEditField.Value = 250;
+            app.FmaxEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.FmaxEditField.Position = [280 71 49 22];
 
             % Create dBminEditField
-            app.dBminEditField = uieditfield(app.UIFigure, 'numeric');
-            app.dBminEditField.ValueChangedFcn = createCallbackFcn(app, @dBminEditFieldValueChanged, true);
-            app.dBminEditField.Position = [744 449 40 23];
+            app.dBminEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.dBminEditField.Position = [224 42 49 22];
 
             % Create dBmaxEditField
-            app.dBmaxEditField = uieditfield(app.UIFigure, 'numeric');
-            app.dBmaxEditField.ValueChangedFcn = createCallbackFcn(app, @dBmaxEditFieldValueChanged, true);
-            app.dBmaxEditField.Position = [744 421 40 23];
-            app.dBmaxEditField.Value = 100;
+            app.dBmaxEditField = uieditfield(app.SpectrogramPanel, 'numeric');
+            app.dBmaxEditField.Position = [280 42 49 22];
+
+            % Create HzLabel
+            app.HzLabel = uilabel(app.SpectrogramPanel);
+            app.HzLabel.HorizontalAlignment = 'center';
+            app.HzLabel.Position = [328 70 25 25];
+            app.HzLabel.Text = 'Hz';
+
+            % Create dBLabel
+            app.dBLabel = uilabel(app.SpectrogramPanel);
+            app.dBLabel.HorizontalAlignment = 'center';
+            app.dBLabel.Position = [328 40 25 25];
+            app.dBLabel.Text = 'dB';
+
+            % Create FreezesettingsSwitchLabel
+            app.FreezesettingsSwitchLabel = uilabel(app.SpectrogramPanel);
+            app.FreezesettingsSwitchLabel.HorizontalAlignment = 'center';
+            app.FreezesettingsSwitchLabel.Position = [176 4 91 22];
+            app.FreezesettingsSwitchLabel.Text = 'Freeze settings';
+
+            % Create FreezeSwitch
+            app.FreezeSwitch = uiswitch(app.SpectrogramPanel, 'slider');
+            app.FreezeSwitch.Position = [295 6 43 19];
+
+            % Create FilterPanel
+            app.FilterPanel = uipanel(app.UIFigure);
+            app.FilterPanel.TitlePosition = 'centertop';
+            app.FilterPanel.Title = 'Filter';
+            app.FilterPanel.FontWeight = 'bold';
+            app.FilterPanel.FontSize = 15;
+            app.FilterPanel.Position = [1062 480 162 126];
+
+            % Create FilterSwitch
+            app.FilterSwitch = uiswitch(app.FilterPanel, 'slider');
+            app.FilterSwitch.Position = [58 63 45 20];
+
+            % Create FilterFminEditField
+            app.FilterFminEditField = uieditfield(app.FilterPanel, 'numeric');
+            app.FilterFminEditField.Position = [10 14 49 22];
+
+            % Create FilterFmaxEditField
+            app.FilterFmaxEditField = uieditfield(app.FilterPanel, 'numeric');
+            app.FilterFmaxEditField.Position = [70 14 49 22];
+
+            % Create FilterHzLabel
+            app.FilterHzLabel = uilabel(app.FilterPanel);
+            app.FilterHzLabel.HorizontalAlignment = 'center';
+            app.FilterHzLabel.Position = [126 13 25 25];
+            app.FilterHzLabel.Text = 'Hz';
+
+            % Create ExportPanel
+            app.ExportPanel = uipanel(app.UIFigure);
+            app.ExportPanel.TitlePosition = 'centertop';
+            app.ExportPanel.Title = 'Export';
+            app.ExportPanel.FontWeight = 'bold';
+            app.ExportPanel.FontSize = 15;
+            app.ExportPanel.Position = [1233 480 162 126];
 
             % Create SpectrogramButton
-            app.SpectrogramButton = uibutton(app.UIFigure, 'push');
-            app.SpectrogramButton.ButtonPushedFcn = createCallbackFcn(app, @SpectrogramButtonPushed, true);
-            app.SpectrogramButton.Position = [1119 483 110 43];
+            app.SpectrogramButton = uibutton(app.ExportPanel, 'push');
+            app.SpectrogramButton.Position = [31 71 100 22];
             app.SpectrogramButton.Text = 'Spectrogram';
 
-            % Create TimeSeriesButton
-            app.TimeSeriesButton = uibutton(app.UIFigure, 'push');
-            app.TimeSeriesButton.ButtonPushedFcn = createCallbackFcn(app, @TimeSeriesButtonPushed, true);
-            app.TimeSeriesButton.Position = [1119 433 110 43];
-            app.TimeSeriesButton.Text = 'Time Series';
+            % Create wavButton
+            app.wavButton = uibutton(app.ExportPanel, 'push');
+            app.wavButton.Position = [31 11 100 22];
+            app.wavButton.Text = '.wav';
+
+            % Create TimeseriesButton
+            app.TimeseriesButton = uibutton(app.ExportPanel, 'push');
+            app.TimeseriesButton.Position = [31 41 100 22];
+            app.TimeseriesButton.Text = 'Time series';
+
+            % Create PlaybackPanel
+            app.PlaybackPanel = uipanel(app.UIFigure);
+            app.PlaybackPanel.TitlePosition = 'centertop';
+            app.PlaybackPanel.Title = 'Playback';
+            app.PlaybackPanel.FontWeight = 'bold';
+            app.PlaybackPanel.FontSize = 15;
+            app.PlaybackPanel.Position = [276 480 147 126];
 
             % Create PlayButton
-            app.PlayButton = uibutton(app.UIFigure, 'push');
+            app.PlayButton = uibutton(app.PlaybackPanel, 'push');
             app.PlayButton.ButtonPushedFcn = createCallbackFcn(app, @PlayButtonPushed, true);
-            app.PlayButton.Position = [970 483 110 43];
-            app.PlayButton.Text = 'Play';
-
-            % Create SelectfileButton
-            app.SelectfileButton = uibutton(app.UIFigure, 'push');
-            app.SelectfileButton.ButtonPushedFcn = createCallbackFcn(app, @SelectfileButtonPushed, true);
-            app.SelectfileButton.Position = [10 442 212 24];
-            app.SelectfileButton.Text = 'Select file';
+            app.PlayButton.FontSize = 20;
+            app.PlayButton.FontWeight = 'bold';
+            app.PlayButton.Position = [14 25 50 50];
+            app.PlayButton.Text = '▶';
 
             % Create StopButton
-            app.StopButton = uibutton(app.UIFigure, 'push');
+            app.StopButton = uibutton(app.PlaybackPanel, 'push');
             app.StopButton.ButtonPushedFcn = createCallbackFcn(app, @StopButtonPushed, true);
-            app.StopButton.Position = [970 433 110 43];
-            app.StopButton.Text = 'Stop';
+            app.StopButton.FontSize = 20;
+            app.StopButton.FontWeight = 'bold';
+            app.StopButton.FontColor = [1 0 0];
+            app.StopButton.Position = [84 25 50 50];
+            app.StopButton.Text = '■';
 
-            % Create Button
-            app.Button = uibutton(app.UIFigure, 'push');
-            app.Button.ButtonPushedFcn = createCallbackFcn(app, @ButtonPushed, true);
-            app.Button.Position = [1212 363 51 54];
-            app.Button.Text = '<';
+            % Create SkipPanel
+            app.SkipPanel = uipanel(app.UIFigure);
+            app.SkipPanel.TitlePosition = 'centertop';
+            app.SkipPanel.Title = 'Skip';
+            app.SkipPanel.FontWeight = 'bold';
+            app.SkipPanel.FontSize = 15;
+            app.SkipPanel.Position = [432 480 242 126];
 
-            % Create Button_2
-            app.Button_2 = uibutton(app.UIFigure, 'push');
-            app.Button_2.ButtonPushedFcn = createCallbackFcn(app, @Button_2Pushed, true);
-            app.Button_2.Position = [1267 363 51 54];
-            app.Button_2.Text = '>';
+            % Create BckwdButton
+            app.BckwdButton = uibutton(app.SkipPanel, 'push');
+            app.BckwdButton.ButtonPushedFcn = createCallbackFcn(app, @BckwdButtonPushed, true);
+            app.BckwdButton.FontWeight = 'bold';
+            app.BckwdButton.Position = [69 25 50 50];
+            app.BckwdButton.Text = '◀◀';
 
-            % Create Switch
-            app.Switch = uiswitch(app.UIFigure, 'slider');
-            app.Switch.Position = [864 506 45 20];
+            % Create FwdButton
+            app.FwdButton = uibutton(app.SkipPanel, 'push');
+            app.FwdButton.ButtonPushedFcn = createCallbackFcn(app, @FwdButtonPushed, true);
+            app.FwdButton.FontWeight = 'bold';
+            app.FwdButton.Position = [125 25 50 50];
+            app.FwdButton.Text = '▶▶';
 
-            % Create FlowEditFieldLabel
-            app.FlowEditFieldLabel = uilabel(app.UIFigure);
-            app.FlowEditFieldLabel.HorizontalAlignment = 'right';
-            app.FlowEditFieldLabel.Position = [822 466 31 22];
-            app.FlowEditFieldLabel.Text = 'Flow';
+            % Create SkipFwdButton
+            app.SkipFwdButton = uibutton(app.SkipPanel, 'push');
+            app.SkipFwdButton.ButtonPushedFcn = createCallbackFcn(app, @SkipFwdButtonPushed, true);
+            app.SkipFwdButton.FontWeight = 'bold';
+            app.SkipFwdButton.Position = [182 25 50 50];
+            app.SkipFwdButton.Text = '▶▶|';
 
-            % Create FlowEditField
-            app.FlowEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FlowEditField.Position = [862 466 49 22];
-            app.FlowEditField.Value = 50;
+            % Create SkipBckwdButton
+            app.SkipBckwdButton = uibutton(app.SkipPanel, 'push');
+            app.SkipBckwdButton.ButtonPushedFcn = createCallbackFcn(app, @SkipBckwdButtonPushed, true);
+            app.SkipBckwdButton.FontWeight = 'bold';
+            app.SkipBckwdButton.Position = [11 25 50 50];
+            app.SkipBckwdButton.Text = '|◀◀';
 
-            % Create FhighEditFieldLabel
-            app.FhighEditFieldLabel = uilabel(app.UIFigure);
-            app.FhighEditFieldLabel.HorizontalAlignment = 'right';
-            app.FhighEditFieldLabel.Position = [818 433 35 22];
-            app.FhighEditFieldLabel.Text = 'Fhigh';
+            % Create FileinfoPanel
+            app.FileinfoPanel = uipanel(app.UIFigure);
+            app.FileinfoPanel.TitlePosition = 'centertop';
+            app.FileinfoPanel.Title = 'File info';
+            app.FileinfoPanel.FontWeight = 'bold';
+            app.FileinfoPanel.FontSize = 15;
+            app.FileinfoPanel.Position = [10 390 664 79];
 
-            % Create FhighEditField
-            app.FhighEditField = uieditfield(app.UIFigure, 'numeric');
-            app.FhighEditField.Position = [862 433 49 22];
-            app.FhighEditField.Value = 200;
+            % Create NameLabel
+            app.NameLabel = uilabel(app.FileinfoPanel);
+            app.NameLabel.Position = [8 27 426 22];
+            app.NameLabel.Text = 'Name:';
 
-            % Create FilestartLabel
-            app.FilestartLabel = uilabel(app.UIFigure);
-            app.FilestartLabel.Position = [10 412 202 22];
-            app.FilestartLabel.Text = 'File start:';
+            % Create StarttimeLabel
+            app.StarttimeLabel = uilabel(app.FileinfoPanel);
+            app.StarttimeLabel.Position = [466 27 188 22];
+            app.StarttimeLabel.Text = 'Start time: ';
 
-            % Create FileendLabel
-            app.FileendLabel = uilabel(app.UIFigure);
-            app.FileendLabel.Position = [10 391 202 22];
-            app.FileendLabel.Text = 'File end:';
+            % Create EndtimeLabel
+            app.EndtimeLabel = uilabel(app.FileinfoPanel);
+            app.EndtimeLabel.Position = [466 6 188 22];
+            app.EndtimeLabel.Text = 'End time:';
 
-            % Create ExportDataLabel
-            app.ExportDataLabel = uilabel(app.UIFigure);
-            app.ExportDataLabel.HorizontalAlignment = 'center';
-            app.ExportDataLabel.FontSize = 15;
-            app.ExportDataLabel.FontWeight = 'bold';
-            app.ExportDataLabel.Position = [1262 540 120 24];
-            app.ExportDataLabel.Text = 'Export Data';
+            % Create FsLabel
+            app.FsLabel = uilabel(app.FileinfoPanel);
+            app.FsLabel.Position = [8 6 91 22];
+            app.FsLabel.Text = 'Fs = ';
 
-            % Create ExportwavButton
-            app.ExportwavButton = uibutton(app.UIFigure, 'push');
-            app.ExportwavButton.ButtonPushedFcn = createCallbackFcn(app, @ExportwavButtonPushed, true);
-            app.ExportwavButton.Position = [1267 458 110 43];
-            app.ExportwavButton.Text = 'Export .wav';
-
-            % Create FiletypeDropDownLabel
-            app.FiletypeDropDownLabel = uilabel(app.UIFigure);
-            app.FiletypeDropDownLabel.HorizontalAlignment = 'right';
-            app.FiletypeDropDownLabel.Position = [6 475 51 22];
-            app.FiletypeDropDownLabel.Text = 'File type';
-
-            % Create FiletypeDropDown
-            app.FiletypeDropDown = uidropdown(app.UIFigure);
-            app.FiletypeDropDown.Items = {'SoundTrap', 'HARP', 'Other'};
-            app.FiletypeDropDown.Position = [65 471 157 29];
-            app.FiletypeDropDown.Value = 'SoundTrap';
-
-            % Create OriginalLabel
-            app.OriginalLabel = uilabel(app.UIFigure);
-            app.OriginalLabel.Position = [559 389 149 25];
-            app.OriginalLabel.Text = 'Original: ';
-
-            % Create DownsampleEditFieldLabel
-            app.DownsampleEditFieldLabel = uilabel(app.UIFigure);
-            app.DownsampleEditFieldLabel.HorizontalAlignment = 'right';
-            app.DownsampleEditFieldLabel.Position = [420 361 75 22];
-            app.DownsampleEditFieldLabel.Text = 'Downsample';
-
-            % Create DownsampleEditField
-            app.DownsampleEditField = uieditfield(app.UIFigure, 'numeric');
-            app.DownsampleEditField.Position = [502 361 38 22];
-            app.DownsampleEditField.Value = 1;
-
-            % Create EffectiveLabel
-            app.EffectiveLabel = uilabel(app.UIFigure);
-            app.EffectiveLabel.Position = [559 360 149 25];
-            app.EffectiveLabel.Text = 'Effective: ';
-
-            % Create SamplerateLabel
-            app.SamplerateLabel = uilabel(app.UIFigure);
-            app.SamplerateLabel.HorizontalAlignment = 'center';
-            app.SamplerateLabel.FontSize = 15;
-            app.SamplerateLabel.FontWeight = 'bold';
-            app.SamplerateLabel.Position = [520 411 102 24];
-            app.SamplerateLabel.Text = 'Sample rate';
-
-            % Create Button_3
-            app.Button_3 = uibutton(app.UIFigure, 'push');
-            app.Button_3.ButtonPushedFcn = createCallbackFcn(app, @Button_3Pushed, true);
-            app.Button_3.Position = [1331 363 51 54];
-            app.Button_3.Text = '>>';
-
-            % Create Button_4
-            app.Button_4 = uibutton(app.UIFigure, 'push');
-            app.Button_4.ButtonPushedFcn = createCallbackFcn(app, @Button_4Pushed, true);
-            app.Button_4.Position = [1148 363 51 54];
-            app.Button_4.Text = '<<';
+            % Create Slider
+            app.Slider = uislider(app.UIFigure);
+            app.Slider.ValueChangedFcn = createCallbackFcn(app, @SliderValueChanged, true);
+            app.Slider.Position = [16 370 1348 3];
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
