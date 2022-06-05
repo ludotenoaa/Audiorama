@@ -383,6 +383,7 @@ classdef Audiorama < matlab.apps.AppBase
                 app=readin(app);
                 % update spectrogram
                 app=update(app);
+                app.Slider.Value=app.tstart-app.ftstart;
             else
                 % load directory
                 D=dir(app.fpath);
