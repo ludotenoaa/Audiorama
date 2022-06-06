@@ -3,6 +3,7 @@ classdef Audiorama < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         UIFigure                    matlab.ui.Figure
+        Switch                      matlab.ui.control.ToggleSwitch
         Slider                      matlab.ui.control.Slider
         FileinfoPanel               matlab.ui.container.Panel
         FsLabel                     matlab.ui.control.Label
@@ -18,14 +19,15 @@ classdef Audiorama < matlab.apps.AppBase
         StopButton                  matlab.ui.control.Button
         PlayButton                  matlab.ui.control.Button
         ExportPanel                 matlab.ui.container.Panel
-        TimeseriesButton            matlab.ui.control.Button
         wavButton                   matlab.ui.control.Button
+        SpectrumButton              matlab.ui.control.Button
         SpectrogramButton           matlab.ui.control.Button
+        TimeseriesButton            matlab.ui.control.Button
         FilterPanel                 matlab.ui.container.Panel
+        FilterSwitch                matlab.ui.control.ToggleSwitch
         FilterHzLabel               matlab.ui.control.Label
         FilterFmaxEditField         matlab.ui.control.NumericEditField
         FilterFminEditField         matlab.ui.control.NumericEditField
-        FilterSwitch                matlab.ui.control.Switch
         SpectrogramPanel            matlab.ui.container.Panel
         FreezeSwitch                matlab.ui.control.Switch
         FreezesettingsSwitchLabel   matlab.ui.control.Label
@@ -71,6 +73,18 @@ classdef Audiorama < matlab.apps.AppBase
         tstart          % window start timee
         duration        % duration (s)
         x               % audio data
+        xf              % filtered audio data 
+        t               % audio data time vector
+        N               % FFT window length
+        NFFT            % number of FFT points
+        Overlap         % FFT overlap (%)
+        Fmin            % display frequency minimum (Hz)
+        Fmax            % display frequency maximum (Hz)
+        dBmin           % display dB minimum  
+        dBmax           % display dB maximum
+        P               % Spectrogram (PSD)
+        F               % Spectrogram frequency vector (Hz)
+        T               % Spectrogram time vector (s)
         default         % default settings flag
         inputimetype    % type of input time
     end
@@ -121,8 +135,7 @@ classdef Audiorama < matlab.apps.AppBase
             % read acoustic data
             app=readin(app);
 
-            % update spectrogram
-            app=update(app);
+          app=update(app);
 
             % remove default settings flag after first initialization
             app.default=0;
@@ -145,7 +158,14 @@ classdef Audiorama < matlab.apps.AppBase
             switch app.inputimetype
                 case 'exact'
                     tmp=datevec(app.DateDatePicker.Value);
-                    app.tstart=datenum(tmp(1),tmp(2),tmp(3),app.hrEditField.Value,app.minEditField.Value,app.sEditField.Value);
+                    tmp=datenum(tmp(1),tmp(2),tmp(3),app.hrEditField.Value,app.minEditField.Value,app.sEditField.Value);
+                    
+                    if tmp>=app.ftstart
+                    app.tstart=tmp;
+                    else
+                        beep; disp('Reached edge of audio file.')
+                        app=update_date_display(app);
+                    end
             
                     app.Slider.Value=app.tstart-app.ftstart;
                 case 'slider'
@@ -163,10 +183,13 @@ classdef Audiorama < matlab.apps.AppBase
 
             % remove mean
             app.x=app.x-mean(app.x);
+
+            % time vector
+            app.t=[0:length(app.x)-1]/app.Fs;
         end
 
         %% update spectrogram
-        function app=update(app)
+        function app=update_spec(app)
     
             % read acoustic data if window duration has changed or new start time
             app.duration=app.DurationEditField.Value;
@@ -176,52 +199,94 @@ classdef Audiorama < matlab.apps.AppBase
 
             if ~app.default
                 % read input spectrogram settings
-                N=2^nextpow2(app.WindowlengthEditField.Value);
-                NFFT=2^nextpow2(app.NFFTEditField.Value);
-                app.WindowlengthEditField.Value=N;
-                app.NFFTEditField.Value=NFFT;
-                Overlap=app.OverlapEditField.Value;
-                Fmin=app.FminEditField.Value;
-                Fmax=app.FmaxEditField.Value;
-                dBmin=app.dBminEditField.Value;
-                dBmax=app.dBmaxEditField.Value;
+                app.N=2^nextpow2(app.WindowlengthEditField.Value);
+                app.NFFT=2^nextpow2(app.NFFTEditField.Value);
+                app.WindowlengthEditField.Value=app.N;
+                app.NFFTEditField.Value=app.NFFT;
+                app.Overlap=app.OverlapEditField.Value;
+                app.Fmin=app.FminEditField.Value;
+                app.Fmax=app.FmaxEditField.Value;
+                app.dBmin=app.dBminEditField.Value;
+                app.dBmax=app.dBmaxEditField.Value;
             else
                 % default settings
-                N=2^(nextpow2(app.Fs/5));
-                NFFT=N*2;
-                Overlap=75;
-                Fmin=0; Fmax=round(app.Fs/4);
-                app.WindowlengthEditField.Value=N;
-                app.NFFTEditField.Value=NFFT;
-                app.OverlapEditField.Value=Overlap;
-                app.FminEditField.Value=Fmin;
-                app.FmaxEditField.Value=Fmax;
+                app.N=2^(nextpow2(app.Fs/5));
+                app.NFFT=app.N*2;
+                app.Overlap=75;
+                app.Fmin=0; app.Fmax=round(app.Fs/4);
+                app.WindowlengthEditField.Value=app.N;
+                app.NFFTEditField.Value=app.NFFT;
+                app.OverlapEditField.Value=app.Overlap;
+                app.FminEditField.Value=app.Fmin;
+                app.FmaxEditField.Value=app.Fmax;
             end
 
             % Compute spectrogram
-            [~,F,T,P]=spectrogram(app.x,N,round(N*Overlap/100),NFFT,app.Fs);
+            [~,app.F,app.T,app.P]=spectrogram(app.x,app.N,round(app.N*app.Overlap/100),app.NFFT,app.Fs);
 
             % Plot spectrogram
-            imagesc(app.UIAxes,T,F,10*log10(P)); set(app.UIAxes,'YDir','Normal');
+            imagesc(app.UIAxes,app.T,app.F,10*log10(app.P)); set(app.UIAxes,'YDir','Normal')
 
             xlabel(app.UIAxes,'Time (s)')
             ylabel(app.UIAxes,'Frequency (Hz)')
-            xlim(app.UIAxes,[T(1) T(end)])
-            ylim(app.UIAxes,[Fmin Fmax])
+            xlim(app.UIAxes,[app.T(1) app.T(end)])
+            ylim(app.UIAxes,[app.Fmin app.Fmax])
 
-            colormap(app.UIAxes,'jet')
+            colormap(app.UIAxes,'turbo')
             cb=colorbar(app.UIAxes); 
             ylabel(cb,'dB/Hz');
             
             if app.default
                 app.dBminEditField.Value=round(cb.Limits(1));
                 app.dBmaxEditField.Value=round(cb.Limits(2));
-                dBmin=app.dBminEditField.Value;
-                dBmax=app.dBmaxEditField.Value;
+                app.dBmin=app.dBminEditField.Value;
+                app.dBmax=app.dBmaxEditField.Value;
             end
-            caxis(app.UIAxes,[dBmin dBmax])   
+            caxis(app.UIAxes,[app.dBmin app.dBmax])   
 
-            app.inputimetype='initial';
+            app.inputimetype='default';
+        end
+
+        %% update time series
+        function app=update_time(app)
+
+            % read acoustic data if window duration has changed or new start time
+            app.duration=app.DurationEditField.Value;
+            if app.duration~=length(app.x)/app.Fs || ~strcmp(app.inputimetype,'default')
+                app=readin(app);
+            end
+
+            % plot times series
+            if strcmp(app.FilterSwitch.Value,'On')
+                app=audiorama_filt(app); 
+                plot(app.UIAxes,app.t,app.xf)
+            else
+                plot(app.UIAxes,app.t,app.x)
+            end
+            grid(app.UIAxes,'on')
+            
+            xlabel(app.UIAxes,'Time (s)')
+            ylabel(app.UIAxes,'Amplitude')
+            xlim(app.UIAxes,[app.t(1) app.t(end)])
+            
+            ylim(app.UIAxes,'auto')
+            maxlim=max(abs(get(app.UIAxes,'YLim')));
+            ylim(app.UIAxes,[-maxlim maxlim]);
+
+            colorbar(app.UIAxes,'delete');
+
+            app.inputimetype='default';
+        end
+
+        %% main update
+        function app=update(app)
+
+            switch app.Switch.Value
+                case 'Spectrogram'
+                    app=update_spec(app);
+                case 'Time series'
+                    app=update_time(app);
+            end
         end
 
         %% determine file start date from name
@@ -265,6 +330,22 @@ classdef Audiorama < matlab.apps.AppBase
                 app.sEditField.Value=str2double(datestr(app.tstart,'SS'));
         end
 
+        %% Filtering function
+        function app=audiorama_filt(app)           
+            if app.FilterFminEditField.Value==0 && app.FilterFmaxEditField.Value==0
+                app.xf=app.x;
+            elseif app.FilterFminEditField.Value==0 && app.FilterFmaxEditField.Value~=0
+                % highpass
+                app.xf=highpass(app.x,app.FilterFmaxEditField.Value,app.Fs);
+            elseif app.FilterFminEditField.Value~=0 && app.FilterFmaxEditField.Value==0
+                % lowpass
+                app.xf=lowpass(app.x,app.FilterFminEditField.Value,app.Fs);
+            else
+                % bandpass
+                app.xf=bandpass(app.x,[app.FilterFminEditField.Value app.FilterFmaxEditField.Value],app.Fs);
+            end
+        end
+
     end
 
 
@@ -306,7 +387,12 @@ classdef Audiorama < matlab.apps.AppBase
 
         % Button pushed function: PlayButton
         function PlayButtonPushed(app, event)
-            soundsc(app.x,app.Fs)
+             if strcmp(app.FilterSwitch.Value,'On')
+                app=audiorama_filt(app); 
+                soundsc(app.xf,app.Fs)
+            else
+                soundsc(app.x,app.Fs)
+             end        
         end
 
         % Button pushed function: StopButton
@@ -381,7 +467,6 @@ classdef Audiorama < matlab.apps.AppBase
                 app.tstart=app.ftstart;
                 % read acoustic data
                 app=readin(app);
-                % update spectrogram
                 app=update(app);
                 app.Slider.Value=app.tstart-app.ftstart;
             else
@@ -436,6 +521,64 @@ classdef Audiorama < matlab.apps.AppBase
         function sEditFieldValueChanged(app, event)
             app.inputimetype='exact';
         end
+
+        % Button pushed function: wavButton
+        function wavButtonPushed(app, event)
+            [~,tmp,~]=fileparts(app.fname);
+            str=sprintf('%s_sample_%s_%is.wav',tmp,datestr(app.tstart,'yyyymmdd_HHMMSS'),round(app.duration));
+            audiowrite(str,app.x,app.Fs);
+        end
+
+        % Button pushed function: SpectrumButton
+        function SpectrumButtonPushed(app, event)
+            [Pxx,Fxx]=pwelch(app.x,app.N,app.Overlap,app.NFFT,app.Fs);
+            figure()
+            plot(Fxx,10*log10(Pxx),'r','linewidth',1); grid on; grid minor
+            xlabel('Frequency (Hz)'); ylabel ('PSD (dB/Hz)')
+            xlim([app.Fmin app.Fmax])
+            yl=get(gca,'YLim');
+            subtitle(sprintf('Filename: %s; Start time: %s; Duration: %i s; N=%i; NFFT=%i; Overlap=%i%%; Fs=%i Hz',...
+                app.fname,datestr(app.tstart,'yyyy-mmm-dd HH:MM:SS'),round(app.duration),app.N,app.NFFT,app.Overlap,app.Fs),...
+                'fontsize',9,'Interpreter','none','Position',[app.Fmin max(yl)],'horizontalalignment','left')
+            set(gcf,'Position',[150 200 1200 500])
+        end
+
+        % Button pushed function: SpectrogramButton
+        function SpectrogramButtonPushed(app, event)
+            figure()
+            imagesc(app.T,app.F,10*log10(app.P)); set(gca,'YDir','Normal')
+            xlabel('Time (s)'); ylabel('Frequency (Hz)')
+            xlim([app.T(1) app.T(end)]); ylim([app.Fmin app.Fmax])
+            colormap('turbo')
+            cb=colorbar; ylabel(cb,'dB/Hz');
+            caxis([app.dBmin app.dBmax])   
+            subtitle(sprintf('Filename: %s; Start time: %s; Duration: %i s; N=%i; NFFT=%i; Overlap=%i%%; Fs=%i Hz',...
+                app.fname,datestr(app.tstart,'yyyy-mmm-dd HH:MM:SS'),round(app.duration),app.N,app.NFFT,app.Overlap,app.Fs),...
+                'fontsize',9,'Interpreter','none','Position',[app.T(1) app.Fmax],'horizontalalignment','left')
+            set(gcf,'Position',[50 300 1450 350])
+        end
+
+        % Button pushed function: TimeseriesButton
+        function TimeseriesButtonPushed(app, event)
+            figure()
+             if strcmp(app.FilterSwitch.Value,'On')
+                app=audiorama_filt(app); 
+                plot(app.t,app.xf)
+            else
+                plot(app.t,app.x)
+            end
+            grid on; grid minor
+            xlabel('Time (s)'); ylabel('Amplitude')
+            maxlim=max(abs(get(gca,'YLim')));
+            ylim([-maxlim maxlim]);
+            str=sprintf('Filename: %s; Start time: %s; Duration: %i s; Fs=%i Hz',...
+                app.fname,datestr(app.tstart,'yyyy-mmm-dd HH:MM:SS'),round(app.duration),app.Fs);             
+            if strcmp(app.FilterSwitch.Value,'On')
+                str=[str,sprintf('; Filter [%i %i] Hz',app.FilterFminEditField.Value,app.FilterFmaxEditField.Value)];
+            end
+            subtitle(str,'fontsize',9,'Interpreter','none','Position',[app.t(1) maxlim],'horizontalalignment','left')
+            set(gcf,'Position',[50 300 1450 350])
+        end
     end
 
     % Component initialization
@@ -459,13 +602,13 @@ classdef Audiorama < matlab.apps.AppBase
             % Create UpdateButton
             app.UpdateButton = uibutton(app.UIFigure, 'push');
             app.UpdateButton.ButtonPushedFcn = createCallbackFcn(app, @UpdateButtonPushed, true);
-            app.UpdateButton.Position = [10 526 255 81];
+            app.UpdateButton.Position = [10 526 172 81];
             app.UpdateButton.Text = 'Update';
 
             % Create LoadfileButton
             app.LoadfileButton = uibutton(app.UIFigure, 'push');
             app.LoadfileButton.ButtonPushedFcn = createCallbackFcn(app, @LoadfileButtonPushed, true);
-            app.LoadfileButton.Position = [10 480 255 34];
+            app.LoadfileButton.Position = [10 480 172 34];
             app.LoadfileButton.Text = 'Load file';
 
             % Create StartTimePanel
@@ -630,23 +773,23 @@ classdef Audiorama < matlab.apps.AppBase
             app.FilterPanel.FontSize = 15;
             app.FilterPanel.Position = [1062 480 162 126];
 
-            % Create FilterSwitch
-            app.FilterSwitch = uiswitch(app.FilterPanel, 'slider');
-            app.FilterSwitch.Position = [58 63 45 20];
-
             % Create FilterFminEditField
             app.FilterFminEditField = uieditfield(app.FilterPanel, 'numeric');
-            app.FilterFminEditField.Position = [10 14 49 22];
+            app.FilterFminEditField.Position = [70 51 49 22];
 
             % Create FilterFmaxEditField
             app.FilterFmaxEditField = uieditfield(app.FilterPanel, 'numeric');
-            app.FilterFmaxEditField.Position = [70 14 49 22];
+            app.FilterFmaxEditField.Position = [70 26 49 22];
 
             % Create FilterHzLabel
             app.FilterHzLabel = uilabel(app.FilterPanel);
             app.FilterHzLabel.HorizontalAlignment = 'center';
-            app.FilterHzLabel.Position = [126 13 25 25];
+            app.FilterHzLabel.Position = [121 25 25 25];
             app.FilterHzLabel.Text = 'Hz';
+
+            % Create FilterSwitch
+            app.FilterSwitch = uiswitch(app.FilterPanel, 'toggle');
+            app.FilterSwitch.Position = [15 28 20 45];
 
             % Create ExportPanel
             app.ExportPanel = uipanel(app.UIFigure);
@@ -654,22 +797,31 @@ classdef Audiorama < matlab.apps.AppBase
             app.ExportPanel.Title = 'Export';
             app.ExportPanel.FontWeight = 'bold';
             app.ExportPanel.FontSize = 15;
-            app.ExportPanel.Position = [1233 480 162 126];
-
-            % Create SpectrogramButton
-            app.SpectrogramButton = uibutton(app.ExportPanel, 'push');
-            app.SpectrogramButton.Position = [31 71 100 22];
-            app.SpectrogramButton.Text = 'Spectrogram';
-
-            % Create wavButton
-            app.wavButton = uibutton(app.ExportPanel, 'push');
-            app.wavButton.Position = [31 11 100 22];
-            app.wavButton.Text = '.wav';
+            app.ExportPanel.Position = [1233 390 162 216];
 
             % Create TimeseriesButton
             app.TimeseriesButton = uibutton(app.ExportPanel, 'push');
-            app.TimeseriesButton.Position = [31 41 100 22];
+            app.TimeseriesButton.ButtonPushedFcn = createCallbackFcn(app, @TimeseriesButtonPushed, true);
+            app.TimeseriesButton.Position = [31 143 100 33];
             app.TimeseriesButton.Text = 'Time series';
+
+            % Create SpectrogramButton
+            app.SpectrogramButton = uibutton(app.ExportPanel, 'push');
+            app.SpectrogramButton.ButtonPushedFcn = createCallbackFcn(app, @SpectrogramButtonPushed, true);
+            app.SpectrogramButton.Position = [31 99 100 34];
+            app.SpectrogramButton.Text = 'Spectrogram';
+
+            % Create SpectrumButton
+            app.SpectrumButton = uibutton(app.ExportPanel, 'push');
+            app.SpectrumButton.ButtonPushedFcn = createCallbackFcn(app, @SpectrumButtonPushed, true);
+            app.SpectrumButton.Position = [31 57 100 34];
+            app.SpectrumButton.Text = 'Spectrum';
+
+            % Create wavButton
+            app.wavButton = uibutton(app.ExportPanel, 'push');
+            app.wavButton.ButtonPushedFcn = createCallbackFcn(app, @wavButtonPushed, true);
+            app.wavButton.Position = [31 13 100 34];
+            app.wavButton.Text = '.wav';
 
             % Create PlaybackPanel
             app.PlaybackPanel = uipanel(app.UIFigure);
@@ -747,12 +899,12 @@ classdef Audiorama < matlab.apps.AppBase
 
             % Create StarttimeLabel
             app.StarttimeLabel = uilabel(app.FileinfoPanel);
-            app.StarttimeLabel.Position = [466 27 188 22];
+            app.StarttimeLabel.Position = [433 27 221 22];
             app.StarttimeLabel.Text = 'Start time: ';
 
             % Create EndtimeLabel
             app.EndtimeLabel = uilabel(app.FileinfoPanel);
-            app.EndtimeLabel.Position = [466 6 188 22];
+            app.EndtimeLabel.Position = [433 6 221 22];
             app.EndtimeLabel.Text = 'End time:';
 
             % Create FsLabel
@@ -764,6 +916,12 @@ classdef Audiorama < matlab.apps.AppBase
             app.Slider = uislider(app.UIFigure);
             app.Slider.ValueChangedFcn = createCallbackFcn(app, @SliderValueChanged, true);
             app.Slider.Position = [16 370 1348 3];
+
+            % Create Switch
+            app.Switch = uiswitch(app.UIFigure, 'toggle');
+            app.Switch.Items = {'Time series', 'Spectrogram'};
+            app.Switch.Position = [221 526 18 40];
+            app.Switch.Value = 'Spectrogram';
 
             % Show the figure after all components are created
             app.UIFigure.Visible = 'on';
